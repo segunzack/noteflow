@@ -12,8 +12,8 @@ import { useState, useEffect, useRef, useCallback, createContext, useContext } f
 import { createClient } from "@supabase/supabase-js";
 
 // ─── 🔧 CONFIG — replace these two values ────────────────────
-const SUPABASE_URL = "https://bbukpndqnffvkuyennhh.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_nYPJLpAEN990p2V24hFaOQ_ljGaQl8m";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 // ─────────────────────────────────────────────────────────────
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
