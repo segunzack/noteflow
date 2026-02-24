@@ -138,6 +138,7 @@ async function claudeCall(prompt) {
     })
   });
   const json = await res.json();
+  if (!res.ok) throw new Error(json?.error?.message || json?.error || `API error ${res.status}`);
   return json.content?.[0]?.text || "";
 }
 
@@ -346,20 +347,20 @@ function AuthScreen() {
 function NigeriaNewsBanner({isMobile,theme}) {
   const [news,    setNews]    = useState(null);
   const [loading, setLoading] = useState(false);
-  const [fetchErr,setFetchErr]= useState(false);
+  const [fetchErr,setFetchErr]= useState(null);
   const [open,    setOpen]    = useState(true);
   const key = `nf_ng_news_${isoToday()}`;
 
   const fetchNews = () => {
     const cached = localStorage.getItem(key);
     if (cached) { try { setNews(JSON.parse(cached)); return; } catch{} }
-    setLoading(true); setFetchErr(false);
+    setLoading(true); setFetchErr(null);
     claudeCall(`You are a Nigeria macroeconomic analyst. Generate today's top 5 Nigeria macroeconomic news headlines with a 1-sentence summary each. Focus on: CBN policy, naira exchange rate, inflation, oil production, GDP, government bonds, FDI, and capital markets. Make them realistic, specific, and current-sounding for ${new Date().toDateString()}. Respond ONLY with a JSON array of 5 objects with keys "headline" and "summary". No preamble.`)
       .then(txt => {
         const m = txt.match(/\[[\s\S]*\]/);
         if (m) { const items=JSON.parse(m[0]); localStorage.setItem(key,JSON.stringify(items)); setNews(items); }
-        else setFetchErr(true);
-      }).catch(()=>setFetchErr(true)).finally(()=>setLoading(false));
+        else setFetchErr("Unexpected AI response format");
+      }).catch(e=>setFetchErr(e.message||"AI service unavailable")).finally(()=>setLoading(false));
   };
 
   useEffect(()=>{ fetchNews(); }, []);
@@ -380,7 +381,7 @@ function NigeriaNewsBanner({isMobile,theme}) {
         {loading && <div style={{color:theme.textMuted,fontSize:13,fontStyle:"italic",fontFamily:"'Cormorant Garamond',serif",padding:"8px 0"}}>Loading Nigeria macro update…</div>}
         {fetchErr && (
           <div style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0"}}>
-            <span style={{color:theme.textMuted,fontSize:12,fontFamily:"'Jost',sans-serif"}}>Could not load news — AI service unavailable.</span>
+            <span style={{color:theme.textMuted,fontSize:12,fontFamily:"'Jost',sans-serif"}}>⚠ {fetchErr}</span>
             <button className="btn" onClick={fetchNews}
               style={{fontSize:11,color:theme.gold,fontFamily:"'Jost',sans-serif",fontWeight:700,
                 background:theme.goldDim,padding:"3px 10px",borderRadius:6}}>↻ Retry</button>
