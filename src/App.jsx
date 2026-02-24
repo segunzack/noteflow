@@ -1288,6 +1288,13 @@ function NoteFlowApp() {
   const [calDate,       setCalDate]       = useState(isoToday());
   const [notifEnabled,  setNotifEnabled]  = useState(false);
   const [notifTime,     setNotifTime]     = useState({hour:8,minute:0});
+  const [errToast,      setErrToast]      = useState(null);
+
+  const dbErr = (err) => {
+    console.error("DB error:", err);
+    setErrToast(err?.message || "Something went wrong. Check your Supabase connection.");
+    setTimeout(() => setErrToast(null), 5000);
+  };
 
   // ── Load data ─────────────────────────────────────────────────
   useEffect(() => {
@@ -1350,7 +1357,8 @@ function NoteFlowApp() {
     const {data,error} = await supabase.from("folders")
       .insert({user_id:user.id,name:newFolderName.trim(),color:FOLDER_COLORS[folders.length%FOLDER_COLORS.length]})
       .select().single();
-    if (!error) { setFolders(f=>[...f,data]); setNewFolderName(""); setShowNewFolder(false); }
+    if (error) { dbErr(error); return; }
+    setFolders(f=>[...f,data]); setNewFolderName(""); setShowNewFolder(false);
   };
   const deleteFolder = async id => {
     await supabase.from("folders").delete().eq("id",id);
@@ -1364,7 +1372,8 @@ function NoteFlowApp() {
       user_id:user.id, folder_id:activeFolder, subject:"", note:"• ",
       note_date:calDate, participants:[], ai_summary:""
     }).select().single();
-    if (!error) { setNotes(n=>[data,...n]); setEditingNote(data); setView("note-edit"); }
+    if (error) { dbErr(error); return; }
+    setNotes(n=>[data,...n]); setEditingNote(data); setView("note-edit");
   };
 
   const updateNote = async (updated) => {
@@ -1395,7 +1404,8 @@ function NoteFlowApp() {
       folder_id:folderId||activeFolder, done:false,
       owner:owner||null, deadline:deadline||null,
     }).select().single();
-    if (!error) setTasks(t=>[...t,data]);
+    if (error) { dbErr(error); return null; }
+    setTasks(t=>[...t,data]);
     return data;
   };
 
@@ -1425,10 +1435,12 @@ function NoteFlowApp() {
   const saveReflection = async (data) => {
     const existing = reflections.find(r=>r.date===isoToday());
     if (existing) {
-      const {data:upd} = await supabase.from("reflections").update(data).eq("id",existing.id).select().single();
+      const {data:upd, error} = await supabase.from("reflections").update(data).eq("id",existing.id).select().single();
+      if (error) { dbErr(error); return; }
       setReflections(r=>r.map(x=>x.id===existing.id?{...x,...upd}:x));
     } else {
-      const {data:created} = await supabase.from("reflections").insert({user_id:user.id,date:isoToday(),...data}).select().single();
+      const {data:created, error} = await supabase.from("reflections").insert({user_id:user.id,date:isoToday(),...data}).select().single();
+      if (error) { dbErr(error); return; }
       setReflections(r=>[created,...r]);
     }
   };
@@ -1467,6 +1479,16 @@ function NoteFlowApp() {
     <div style={{background:theme.bg,color:theme.text,height:"100dvh",display:"flex",
       flexDirection:"column",overflow:"hidden",fontFamily:"'Cormorant Garamond',Georgia,serif",fontSize}}>
       <style>{globalCSS(theme)}</style>
+
+      {/* Error Toast */}
+      {errToast && (
+        <div style={{position:"fixed",bottom:80,left:"50%",transform:"translateX(-50%)",
+          background:"#f76a8a",color:"#fff",padding:"10px 20px",borderRadius:10,
+          fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:13,zIndex:9999,
+          boxShadow:"0 4px 20px rgba(0,0,0,0.4)",maxWidth:"90vw",textAlign:"center"}}>
+          ⚠ {errToast}
+        </div>
+      )}
 
       {/* Email Modal */}
       {emailNote && (
