@@ -346,19 +346,23 @@ function AuthScreen() {
 function NigeriaNewsBanner({isMobile,theme}) {
   const [news,    setNews]    = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fetchErr,setFetchErr]= useState(false);
   const [open,    setOpen]    = useState(true);
   const key = `nf_ng_news_${isoToday()}`;
 
-  useEffect(() => {
+  const fetchNews = () => {
     const cached = localStorage.getItem(key);
-    if (cached) { try { setNews(JSON.parse(cached)); } catch{} return; }
-    setLoading(true);
+    if (cached) { try { setNews(JSON.parse(cached)); return; } catch{} }
+    setLoading(true); setFetchErr(false);
     claudeCall(`You are a Nigeria macroeconomic analyst. Generate today's top 5 Nigeria macroeconomic news headlines with a 1-sentence summary each. Focus on: CBN policy, naira exchange rate, inflation, oil production, GDP, government bonds, FDI, and capital markets. Make them realistic, specific, and current-sounding for ${new Date().toDateString()}. Respond ONLY with a JSON array of 5 objects with keys "headline" and "summary". No preamble.`)
       .then(txt => {
         const m = txt.match(/\[[\s\S]*\]/);
         if (m) { const items=JSON.parse(m[0]); localStorage.setItem(key,JSON.stringify(items)); setNews(items); }
-      }).catch(console.error).finally(()=>setLoading(false));
-  }, []);
+        else setFetchErr(true);
+      }).catch(()=>setFetchErr(true)).finally(()=>setLoading(false));
+  };
+
+  useEffect(()=>{ fetchNews(); }, []);
 
   if (!open) return null;
   return (
@@ -374,6 +378,14 @@ function NigeriaNewsBanner({isMobile,theme}) {
       <div style={{display:"flex",overflowX:"auto",padding:isMobile?"8px 14px":"8px 22px",
         scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",gap:0}}>
         {loading && <div style={{color:theme.textMuted,fontSize:13,fontStyle:"italic",fontFamily:"'Cormorant Garamond',serif",padding:"8px 0"}}>Loading Nigeria macro update…</div>}
+        {fetchErr && (
+          <div style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0"}}>
+            <span style={{color:theme.textMuted,fontSize:12,fontFamily:"'Jost',sans-serif"}}>Could not load news — AI service unavailable.</span>
+            <button className="btn" onClick={fetchNews}
+              style={{fontSize:11,color:theme.gold,fontFamily:"'Jost',sans-serif",fontWeight:700,
+                background:theme.goldDim,padding:"3px 10px",borderRadius:6}}>↻ Retry</button>
+          </div>
+        )}
         {news&&news.map((item,i)=>(
           <div key={i} style={{minWidth:isMobile?"82vw":260,maxWidth:isMobile?"82vw":260,marginRight:10,
             background:theme.surface2,border:`1px solid ${theme.border}`,borderRadius:10,padding:"9px 12px",
