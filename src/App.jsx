@@ -391,19 +391,19 @@ function NigeriaNewsBanner({isMobile,theme}) {
 
   if (!open) return null;
   return (
-    <div style={{background:theme.surface,borderBottom:`1px solid ${theme.border}`,flexShrink:0}}>
-      <div style={{display:"flex",alignItems:"center",gap:8,padding:isMobile?"8px 14px 5px":"8px 22px 5px",borderBottom:`1px solid ${theme.borderSoft}`}}>
-        <span>🇳🇬</span>
-        <span style={{fontFamily:"'DM Mono',monospace",fontSize:19,letterSpacing:"0.01em",color:theme.textMuted,textTransform:"uppercase"}}>
+    <div style={{background:theme.surface,borderBottom:`1px solid ${theme.border}`,flexShrink:0,
+      maxHeight:isMobile?"20vh":undefined,overflow:isMobile?"hidden":undefined}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,padding:isMobile?"4px 12px 3px":"8px 22px 5px",borderBottom:`1px solid ${theme.borderSoft}`}}>
+        <span style={{fontSize:isMobile?12:undefined}}>🇳🇬</span>
+        <span style={{fontFamily:"'DM Mono',monospace",fontSize:isMobile?10:15,letterSpacing:"0.01em",color:theme.textMuted,textTransform:"uppercase"}}>
           Nigeria Macro · {new Date().toDateString()}
         </span>
         <div style={{flex:1}}/>
-        <button className="btn" onClick={()=>setOpen(false)} style={{color:theme.textMuted,fontSize:19,lineHeight:1}}>✕</button>
+        <button className="btn" onClick={()=>setOpen(false)} style={{color:theme.textMuted,fontSize:isMobile?12:15,lineHeight:1}}>✕</button>
       </div>
       <div style={{display:"flex",overflowX:"auto",
-        padding:isMobile?"5px 12px 6px":"8px 22px",
-        scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",gap:0,
-        maxHeight:isMobile?"calc(20vh - 32px)":undefined}}>
+        padding:isMobile?"4px 12px 4px":"8px 22px",
+        scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",gap:0}}>
         {loading && <div style={{color:theme.textMuted,fontSize:isMobile?11:15,fontStyle:"italic",fontFamily:"'Lora',Georgia,serif",padding:"4px 0"}}>Loading…</div>}
         {news&&news.map((item,i)=>(
           <div key={i} style={{minWidth:isMobile?"70vw":260,maxWidth:isMobile?"70vw":260,marginRight:8,
@@ -1303,12 +1303,13 @@ function HomeDashboard({ theme, notes, tasks, allTasks, quote, qFade, onNextQuot
   return (
     <div className="fade-in">
 
-      {/* Hero quote card — compact on mobile (~10vh) */}
+      {/* Hero quote card — exactly 10vh on mobile */}
       <div style={{ background:theme.dashHero,borderRadius:16,
         padding:isMobile?"6px 12px":"24px 22px 20px",
         marginBottom:isMobile?8:16,
         border:`1px solid ${theme.quoteBorder}`,position:"relative",overflow:"hidden",
-        maxHeight:isMobile?"10vh":undefined }}>
+        height:isMobile?"10vh":undefined,
+        boxSizing:isMobile?"border-box":undefined }}>
         {!isMobile&&<div style={{ position:"absolute",top:-20,right:4,fontSize:160,color:theme.gold,
           opacity:0.05,fontFamily:"'Lora',Georgia,serif",lineHeight:1,userSelect:"none",pointerEvents:"none" }}>"</div>}
         <div style={{ opacity:qFade?1:0,transition:"opacity 0.28s",
