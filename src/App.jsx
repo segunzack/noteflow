@@ -1496,8 +1496,13 @@ function NoteFlowApp() {
   const [loading,     setLoading]     = useState(true);
 
   // UI state
-  const [view,          setView]          = useState("todos");
+  const [view,          setView]          = useState("home");
   const [activeSeg,     setActiveSeg]     = useState("today");
+
+  // ── Quote state (for HomeDashboard) ──────────────────────────
+  const [quoteIdx,  setQuoteIdx]  = useState(()=>Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/86400000)%QUOTES.length);
+  const [quoteFade, setQuoteFade] = useState(true);
+  const nextQuote = () => { setQuoteFade(false); setTimeout(()=>{ setQuoteIdx(i=>(i+1)%QUOTES.length); setQuoteFade(true); }, 280); };
   const [activeFolder,  setActiveFolder]  = useState(null);
   const [editingNote,   setEditingNote]   = useState(null);
   const [emailNote,     setEmailNote]     = useState(null);
