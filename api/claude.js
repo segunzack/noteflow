@@ -1,40 +1,35 @@
+// api/claude.js — Vercel serverless function
+// Proxies all Claude API calls from the frontend, injecting the API key server-side.
+// The frontend never sees the ANTHROPIC_API_KEY.
+
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") { res.status(200).end(); return; }
+  if (req.method !== "POST") { res.status(405).json({ error: "Method not allowed" }); return; }
+
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    res.status(500).json({ error: "ANTHROPIC_API_KEY not configured" });
+    return;
   }
 
   try {
-    const { messages, max_tokens } = req.body;
-
-    // Forward to Groq (OpenAI-compatible — free tier, no billing required)
-    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
       },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages,
-        max_tokens: max_tokens || 1000,
-      }),
+      body: JSON.stringify(req.body),
     });
 
-    const data = await groqRes.json();
-
-    if (!groqRes.ok) {
-      console.error("Groq error:", data);
-      return res.status(groqRes.status).json({ error: data?.error?.message || "Groq API error" });
-    }
-
-    // Convert Groq/OpenAI response → Anthropic format (frontend unchanged)
-    const text = data?.choices?.[0]?.message?.content || "";
-    return res.status(200).json({
-      content: [{ type: "text", text }]
-    });
-
+    const data = await response.json();
+    res.status(response.status).json(data);
   } catch (err) {
-    console.error("Proxy error:", err);
-    return res.status(500).json({ error: "Proxy request failed", detail: err.message });
+    console.error("Claude proxy error:", err);
+    res.status(500).json({ error: "Internal server error", detail: err.message });
   }
 }

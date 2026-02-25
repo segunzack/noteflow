@@ -5,8 +5,8 @@
 //  ✦ Action Points with deadlines & owners → aggregated To-Dos
 //  ✦ 3-level bullet editor (Tab/Shift+Tab)
 //  ✦ Auto AI summary on every note
-//  ✦ Bold Cormorant Garamond quote typography
-//  ✦ Beautiful Jost + Cormorant + JetBrains Mono font system
+//  ✦ Apple Journal colour palette (iOS system colours + indigo accent)
+//  ✦ Lora + Plus Jakarta Sans + DM Mono font system
 //  ✦ Email meeting notes (body + APs + AI summary)
 //  ✦ Dark / Light mode toggle
 //  ✦ Swipe to delete tasks on mobile
@@ -78,42 +78,53 @@ const QUOTES = [
 
 // ─── Theme system ─────────────────────────────────────────────
 function getTheme(mode) {
-  if (mode === "light") return {
-    bg:"#f8f5ef", surface:"#ffffff", surface2:"#f0ebe0",
-    border:"#e2d9cc", borderSoft:"#ece5db",
-    topBar:"#ffffff", sidebar:"#faf6ee",
-    text:"#1a160d", textSoft:"#5c4e38", textMuted:"#9e8e78",
-    gold:"#a07828", goldDim:"#a0782814", goldBright:"#c09030",
-    accent:"#a07828", accentBg:"#a0782812",
-    danger:"#b04040", dangerDim:"#b0404012",
-    teal:"#2a7a80", tealDim:"#2a7a8012",
-    green:"#2a7a50", card:"#ffffff", cardHover:"#fdf8f2",
-    quote:"linear-gradient(140deg,#fdf3d4 0%,#fae8b8 60%,#fdf0d0 100%)",
-    quoteText:"#2a1f05", quoteBorder:"#c8a84b",
-    navBg:"#ffffff",
+  const d = {
+    bg:"#000000", bg2:"#0D0D0D", surface:"#1C1C1E", surface2:"#2C2C2E",
+    border:"#38383A", borderSoft:"#2C2C2E",
+    topbar:"#1C1C1E",
+    text:"#FFFFFF", textSoft:"#EBEBF5CC", textMuted:"#8E8E93",
+    gold:"#7B7FE8", goldDim:"#7B7FE81A", goldBright:"#A78BFA",
+    rose:"#FF453A", roseDim:"#FF453A18",
+    teal:"#32ADE6", tealDim:"#32ADE618",
+    green:"#32D74B",
+    quote:"linear-gradient(160deg,#1C1C2E 0%,#16162A 60%,#0D0D1A 100%)",
+    quoteText:"#EBEBF5", quoteBorder:"#3A3A5C",
+    cardBg:"#1C1C1E", cardHover:"#2C2C2E",
+    navBg:"#1C1C1E",
+    pill:"#2C2C2E", pillActive:"#7B7FE8",
+    dashHero:"linear-gradient(160deg,#1C1C2E 0%,#1C1C1E 55%,#0D0D0D 100%)",
+    danger:"#FF453A",
   };
-  return {
-    bg:"#0c0b0e", surface:"#151219", surface2:"#1c1825",
-    border:"#272438", borderSoft:"#1f1d2c",
-    topBar:"#100e14", sidebar:"#0f0d13",
-    text:"#ede8df", textSoft:"#b8aead", textMuted:"#6b6278",
-    gold:"#c8a84b", goldDim:"#c8a84b18", goldBright:"#e2c068",
-    accent:"#c8a84b", accentBg:"#c8a84b14",
-    danger:"#c96b6b", dangerDim:"#c96b6b18",
-    teal:"#4cabb0", tealDim:"#4cabb018",
-    green:"#5aab82", card:"#151219", cardHover:"#1b1929",
-    quote:"linear-gradient(140deg,#1a1508 0%,#211c0a 60%,#150f04 100%)",
-    quoteText:"#f5e8c0", quoteBorder:"#5c4812",
-    navBg:"#0e0d16",
+  const l = {
+    bg:"#F2F2F7", bg2:"#E5E5EA", surface:"#FFFFFF", surface2:"#F2F2F7",
+    border:"#C6C6C8", borderSoft:"#D1D1D6",
+    topbar:"#FFFFFF",
+    text:"#1C1C1E", textSoft:"#3C3C43", textMuted:"#8E8E93",
+    gold:"#5E5CE6", goldDim:"#5E5CE614", goldBright:"#7B7FE8",
+    rose:"#FF3B30", roseDim:"#FF3B3010",
+    teal:"#007AFF", tealDim:"#007AFF12",
+    green:"#34C759",
+    quote:"linear-gradient(160deg,#EEF0FF 0%,#F5F5FF 55%,#FFFFFF 100%)",
+    quoteText:"#1C1C1E", quoteBorder:"#C7C7FF",
+    cardBg:"#FFFFFF", cardHover:"#F9F9FB",
+    navBg:"#FFFFFF",
+    pill:"#F2F2F7", pillActive:"#5E5CE6",
+    navBorder:"#C6C6C8",
+    dashHero:"linear-gradient(160deg,#EEF0FF 0%,#F5F5FF 50%,#F2F2F7 100%)",
+    danger:"#FF3B30",
   };
+  return mode === "dark" ? d : l;
 }
-
 // ─── Helpers ─────────────────────────────────────────────────
 function isoToday() { return new Date().toISOString().split("T")[0]; }
 function fmtDate(iso) { return new Date(iso+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}); }
 function tokenize(t="") { return t.toLowerCase().replace(/[^a-z0-9\s]/g,"").split(/\s+/).filter(Boolean); }
 function buildVec(toks,vocab) { const f={}; toks.forEach(t=>{f[t]=(f[t]||0)+1;}); return vocab.map(v=>f[v]||0); }
 function cosim(a,b) { let d=0,na=0,nb=0; for(let i=0;i<a.length;i++){d+=a[i]*b[i];na+=a[i]**2;nb+=b[i]**2;} return na&&nb?d/(Math.sqrt(na)*Math.sqrt(nb)):0; }
+
+// ─── Font scale ──────────────────────────────────────────────
+const SCALES = { S: 0.94, M: 1.0, L: 1.12, XL: 1.25 };
+function fs(base, scale) { return Math.round(base * scale * 10) / 10; }
 
 // ─── Hooks ───────────────────────────────────────────────────
 function useIsMobile() {
@@ -138,8 +149,15 @@ async function claudeCall(prompt) {
     })
   });
   const json = await res.json();
-  if (!res.ok) throw new Error(json?.error?.message || json?.error || `API error ${res.status}`);
   return json.content?.[0]?.text || "";
+}
+
+// ─── Live news via /api/news (Claude + web_search) ────────────
+async function fetchLiveNews() {
+  const res = await fetch("/api/news");
+  if (!res.ok) throw new Error(`News fetch failed: ${res.status}`);
+  const json = await res.json();
+  return json.items || [];
 }
 
 // ─── Notifications ────────────────────────────────────────────
@@ -162,7 +180,7 @@ function scheduleReminder(tasks, time) {
 
 // ─── Global CSS ───────────────────────────────────────────────
 const globalCSS = (theme) => `
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Jost:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
   * { box-sizing:border-box; margin:0; padding:0; }
   html, body, #root { height:100%; overflow:hidden; }
   body { -webkit-tap-highlight-color:transparent; background:${theme.bg}; }
@@ -171,11 +189,11 @@ const globalCSS = (theme) => `
   ::-webkit-scrollbar-thumb { background:${theme.border}; border-radius:2px; }
   .btn { cursor:pointer; border:none; background:none; color:inherit; font:inherit; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
   input, textarea, select {
-    border-radius:8px; padding:8px 12px; font-family:'Cormorant Garamond',Georgia,serif;
+    border-radius:8px; padding:8px 12px; font-family:'Lora',Georgia,serif;
     font-size:15px; outline:none; resize:vertical; -webkit-appearance:none;
   }
   input:focus, textarea:focus, select:focus { border-color:${theme.gold} !important; box-shadow:0 0 0 2px ${theme.goldDim}; }
-  select { font-family:'Jost',sans-serif; font-size:12px; -webkit-appearance:auto; appearance:auto; }
+  select { font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; -webkit-appearance:auto; appearance:auto; }
   .note-card:hover { border-color:${theme.gold} !important; transform:translateY(-2px); box-shadow:0 6px 28px ${theme.gold}18; }
   .note-card { transition:all 0.2s ease; }
   .seg-btn.active { background:${theme.gold} !important; color:${theme.bg} !important; border-color:${theme.gold} !important; }
@@ -194,8 +212,8 @@ const globalCSS = (theme) => `
 
 // ─── Label helper ─────────────────────────────────────────────
 const lbl = theme => ({
-  display:"block", fontSize:10, color:theme.textMuted, marginBottom:4,
-  fontFamily:"'JetBrains Mono',monospace", textTransform:"uppercase", letterSpacing:"0.1em"
+  display:"block", fontSize:26, color:theme.textMuted, marginBottom:4,
+  fontFamily:"'DM Mono',monospace", textTransform:"uppercase", letterSpacing:"0.03em"
 });
 
 // ════════════════════════════════════════════════════════════════
@@ -270,15 +288,15 @@ function AuthScreen() {
 
   return (
     <div style={{background:theme.bg,height:"100dvh",display:"flex",flexDirection:"column",
-      alignItems:"center",justifyContent:"center",padding:24,fontFamily:"'Cormorant Garamond',Georgia,serif",color:theme.text}}>
+      alignItems:"center",justifyContent:"center",padding:24,fontFamily:"'Lora',Georgia,serif",color:theme.text}}>
       <style>{globalCSS(theme)}</style>
       <div style={{width:"100%",maxWidth:400}}>
         {/* Logo */}
         <div style={{textAlign:"center",marginBottom:28}}>
           <div style={{fontSize:36,color:theme.gold,marginBottom:6,lineHeight:1}}>✦</div>
-          <div style={{fontFamily:"'Cormorant Garamond',Georgia,serif",fontWeight:700,fontSize:30,
+          <div style={{fontFamily:"'Lora',Georgia,serif",fontWeight:700,fontSize:30,
             color:theme.text,letterSpacing:"-0.5px",lineHeight:1}}>NoteFlow</div>
-          <div style={{fontFamily:"'Jost',sans-serif",color:theme.textMuted,fontSize:13,marginTop:4,fontWeight:400}}>
+          <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",color:theme.textMuted,fontSize:19,marginTop:4,fontWeight:400}}>
             Your portable thinking assistant
           </div>
         </div>
@@ -287,28 +305,28 @@ function AuthScreen() {
         <div style={{background:theme.quote,border:`1px solid ${theme.quoteBorder}`,borderRadius:14,
           padding:"14px 18px",marginBottom:22,position:"relative",overflow:"hidden"}}>
           <div style={{position:"absolute",top:-20,right:4,fontSize:100,color:theme.gold,opacity:0.08,
-            fontFamily:"'Cormorant Garamond',Georgia,serif",lineHeight:1,userSelect:"none"}}>❝</div>
-          <p style={{fontFamily:"'Cormorant Garamond',Georgia,serif",fontStyle:"italic",fontWeight:700,
-            fontSize:16,color:theme.quoteText,lineHeight:1.55,marginBottom:8}}>"{q.text}"</p>
+            fontFamily:"'Lora',Georgia,serif",lineHeight:1,userSelect:"none"}}>❝</div>
+          <p style={{fontFamily:"'Lora',Georgia,serif",fontStyle:"italic",fontWeight:700,
+            fontSize:26,color:theme.quoteText,lineHeight:1.55,marginBottom:8}}>"{q.text}"</p>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
-            <span style={{fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:11,color:theme.gold}}>— {q.author}</span>
-            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,color:theme.textMuted}}>{q.role}</span>
+            <span style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,color:theme.gold}}>— {q.author}</span>
+            <span style={{fontFamily:"'DM Mono',monospace",fontSize:19,color:theme.textMuted}}>{q.role}</span>
           </div>
         </div>
 
         {/* Auth card */}
         <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:26}}>
-          <div style={{display:"flex",gap:4,marginBottom:22,background:theme.surface2,borderRadius:10,padding:4}}>
+          <div style={{display:"flex",gap:4,marginBottom:22,background:theme.surface2,borderRadius:14,padding:4}}>
             {["login","signup"].map(m=>(
               <button key={m} className="btn" onClick={()=>{setMode(m);setMsg(null);}}
-                style={{flex:1,padding:"9px 0",borderRadius:7,fontSize:13,fontFamily:"'Jost',sans-serif",fontWeight:700,
-                  letterSpacing:"0.04em",background:mode===m?theme.gold:"transparent",
+                style={{flex:1,padding:"9px 0",borderRadius:7,fontSize:19,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,
+                  letterSpacing:"0.01em",background:mode===m?theme.gold:"transparent",
                   color:mode===m?theme.bg:theme.textMuted,transition:"all 0.15s"}}>
                 {m==="login"?"Log In":"Sign Up"}
               </button>
             ))}
           </div>
-          {msg && <div style={{padding:"9px 13px",borderRadius:8,marginBottom:14,fontSize:13,fontFamily:"'Jost',sans-serif",
+          {msg && <div style={{padding:"9px 13px",borderRadius:16,marginBottom:14,fontSize:19,fontFamily:"'Plus Jakarta Sans',sans-serif",
             background:msg.t==="ok"?theme.tealDim:theme.dangerDim,
             color:msg.t==="ok"?theme.teal:theme.danger,
             border:`1px solid ${msg.t==="ok"?theme.teal:theme.danger}44`}}>{msg.text}</div>}
@@ -327,12 +345,12 @@ function AuthScreen() {
             </div>
           )}
           <button className="btn" onClick={submit} disabled={busy}
-            style={{width:"100%",padding:"13px 0",background:theme.gold,color:theme.bg,borderRadius:10,
-              fontFamily:"'Jost',sans-serif",fontWeight:800,fontSize:14,letterSpacing:"0.06em",opacity:busy?0.6:1}}>
+            style={{width:"100%",padding:"13px 0",background:theme.gold,color:theme.bg,borderRadius:14,
+              fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:26,letterSpacing:"0.02em",opacity:busy?0.6:1}}>
             {busy?"…":mode==="login"?"LOG IN":mode==="signup"?"CREATE ACCOUNT":"SEND RESET EMAIL"}
           </button>
           {mode==="login"&&<button className="btn" onClick={()=>{setMode("reset");setMsg(null);}}
-            style={{display:"block",margin:"10px auto 0",fontSize:11,color:theme.textMuted,fontFamily:"'Jost',sans-serif"}}>
+            style={{display:"block",margin:"10px auto 0",fontSize:19,color:theme.textMuted,fontFamily:"'Plus Jakarta Sans',sans-serif"}}>
             Forgot password?
           </button>}
         </div>
@@ -347,58 +365,56 @@ function AuthScreen() {
 function NigeriaNewsBanner({isMobile,theme}) {
   const [news,    setNews]    = useState(null);
   const [loading, setLoading] = useState(false);
-  const [fetchErr,setFetchErr]= useState(null);
   const [open,    setOpen]    = useState(true);
   const key = `nf_ng_news_${isoToday()}`;
 
-  const fetchNews = () => {
+  useEffect(() => {
+    // Cache for today — avoids repeated API calls on re-renders
     const cached = localStorage.getItem(key);
-    if (cached) { try { setNews(JSON.parse(cached)); return; } catch{} }
-    setLoading(true); setFetchErr(null);
-    claudeCall(`You are a Nigeria macroeconomic analyst. Generate today's top 5 Nigeria macroeconomic news headlines with a 1-sentence summary each. Focus on: CBN policy, naira exchange rate, inflation, oil production, GDP, government bonds, FDI, and capital markets. Make them realistic, specific, and current-sounding for ${new Date().toDateString()}. Respond ONLY with a JSON array of 5 objects with keys "headline" and "summary". No preamble.`)
-      .then(txt => {
-        const m = txt.match(/\[[\s\S]*\]/);
-        if (m) { const items=JSON.parse(m[0]); localStorage.setItem(key,JSON.stringify(items)); setNews(items); }
-        else setFetchErr("Unexpected AI response format");
-      }).catch(e=>setFetchErr(e.message||"AI service unavailable")).finally(()=>setLoading(false));
-  };
-
-  useEffect(()=>{ fetchNews(); }, []);
+    if (cached) { try { setNews(JSON.parse(cached)); } catch{} return; }
+    setLoading(true);
+    fetchLiveNews()
+      .then(items => {
+        localStorage.setItem(key, JSON.stringify(items));
+        setNews(items);
+      })
+      .catch(err => {
+        console.error("Live news fetch failed:", err);
+        // Graceful fallback — show a static placeholder so the banner is not empty
+        setNews([{
+          headline: "Nigeria Macro Update Unavailable",
+          summary: "Could not load live data. Check your API key and network connection."
+        }]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   if (!open) return null;
   return (
     <div style={{background:theme.surface,borderBottom:`1px solid ${theme.border}`,flexShrink:0}}>
       <div style={{display:"flex",alignItems:"center",gap:8,padding:isMobile?"8px 14px 5px":"8px 22px 5px",borderBottom:`1px solid ${theme.borderSoft}`}}>
         <span>🇳🇬</span>
-        <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,letterSpacing:"0.18em",color:theme.textMuted,textTransform:"uppercase"}}>
+        <span style={{fontFamily:"'DM Mono',monospace",fontSize:19,letterSpacing:"0.01em",color:theme.textMuted,textTransform:"uppercase"}}>
           Nigeria Macro · {new Date().toDateString()}
         </span>
         <div style={{flex:1}}/>
-        <button className="btn" onClick={()=>setOpen(false)} style={{color:theme.textMuted,fontSize:15,lineHeight:1}}>✕</button>
+        <button className="btn" onClick={()=>setOpen(false)} style={{color:theme.textMuted,fontSize:19,lineHeight:1}}>✕</button>
       </div>
       <div style={{display:"flex",overflowX:"auto",padding:isMobile?"8px 14px":"8px 22px",
         scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",gap:0}}>
-        {loading && <div style={{color:theme.textMuted,fontSize:13,fontStyle:"italic",fontFamily:"'Cormorant Garamond',serif",padding:"8px 0"}}>Loading Nigeria macro update…</div>}
-        {fetchErr && (
-          <div style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0"}}>
-            <span style={{color:theme.textMuted,fontSize:12,fontFamily:"'Jost',sans-serif"}}>⚠ {fetchErr}</span>
-            <button className="btn" onClick={fetchNews}
-              style={{fontSize:11,color:theme.gold,fontFamily:"'Jost',sans-serif",fontWeight:700,
-                background:theme.goldDim,padding:"3px 10px",borderRadius:6}}>↻ Retry</button>
-          </div>
-        )}
+        {loading && <div style={{color:theme.textMuted,fontSize:19,fontStyle:"italic",fontFamily:"'Lora',Georgia,serif",padding:"8px 0"}}>Loading Nigeria macro update…</div>}
         {news&&news.map((item,i)=>(
           <div key={i} style={{minWidth:isMobile?"82vw":260,maxWidth:isMobile?"82vw":260,marginRight:10,
-            background:theme.surface2,border:`1px solid ${theme.border}`,borderRadius:10,padding:"9px 12px",
+            background:theme.surface2,border:`1px solid ${theme.border}`,borderRadius:14,padding:"9px 12px",
             flexShrink:0,scrollSnapAlign:"start"}}>
             <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
-              <span style={{background:theme.goldDim,color:theme.gold,borderRadius:4,padding:"0 5px",
-                fontSize:9,fontFamily:"'JetBrains Mono',monospace",fontWeight:500,flexShrink:0,marginTop:2}}>
+              <span style={{background:theme.goldDim,color:theme.gold,borderRadius:16,padding:"0 5px",
+                fontSize:19,fontFamily:"'DM Mono',monospace",fontWeight:500,flexShrink:0,marginTop:2}}>
                 {String(i+1).padStart(2,"0")}
               </span>
               <div>
-                <div style={{fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:11,color:theme.text,marginBottom:3,lineHeight:1.35}}>{item.headline}</div>
-                <div style={{fontSize:11,color:theme.textSoft,lineHeight:1.5,fontFamily:"'Cormorant Garamond',serif"}}>{item.summary}</div>
+                <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,color:theme.text,marginBottom:3,lineHeight:1.35}}>{item.headline}</div>
+                <div style={{fontSize:19,color:theme.textSoft,lineHeight:1.5,fontFamily:"'Lora',Georgia,serif"}}>{item.summary}</div>
               </div>
             </div>
           </div>
@@ -409,7 +425,7 @@ function NigeriaNewsBanner({isMobile,theme}) {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  QUOTE BANNER — bold Cormorant, large, visible
+//  QUOTE BANNER — Lora italic, large, visible
 // ════════════════════════════════════════════════════════════════
 function QuoteBanner({isMobile,theme}) {
   const [visible, setVisible] = useState(true);
@@ -424,24 +440,24 @@ function QuoteBanner({isMobile,theme}) {
     <div style={{background:theme.quote,borderBottom:`1px solid ${theme.quoteBorder}`,
       padding:isMobile?"13px 16px 12px":"14px 22px 13px",flexShrink:0,position:"relative",overflow:"hidden"}}>
       <div style={{position:"absolute",top:-28,right:4,fontSize:120,color:theme.gold,opacity:0.07,
-        fontFamily:"'Cormorant Garamond',serif",lineHeight:1,userSelect:"none",pointerEvents:"none"}}>❝</div>
+        fontFamily:"'Lora',Georgia,serif",lineHeight:1,userSelect:"none",pointerEvents:"none"}}>❝</div>
       <div style={{opacity:fade?1:0,transition:"opacity 0.28s"}}>
-        <div style={{fontFamily:"'Jost',sans-serif",fontWeight:800,fontSize:9,color:theme.gold,
+        <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,color:theme.gold,
           textTransform:"uppercase",letterSpacing:"0.2em",marginBottom:6}}>✦ QUOTE OF THE DAY</div>
-        <p style={{fontFamily:"'Cormorant Garamond',Georgia,serif",fontStyle:"italic",fontWeight:700,
+        <p style={{fontFamily:"'Lora',Georgia,serif",fontStyle:"italic",fontWeight:700,
           fontSize:isMobile?17:19,color:theme.quoteText,lineHeight:1.5,marginBottom:7,paddingRight:52,letterSpacing:"0.01em"}}>
           "{q.text}"
         </p>
         <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
-          <span style={{fontFamily:"'Jost',sans-serif",fontWeight:800,fontSize:12,color:theme.gold}}>— {q.author}</span>
-          <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,color:theme.textMuted,letterSpacing:"0.05em"}}>{q.role}</span>
+          <span style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:26,color:theme.gold}}>— {q.author}</span>
+          <span style={{fontFamily:"'DM Mono',monospace",fontSize:19,color:theme.textMuted,letterSpacing:"0.01em"}}>{q.role}</span>
         </div>
       </div>
       <div style={{position:"absolute",top:8,right:8,display:"flex",gap:4}}>
         <button className="btn" onClick={next}
-          style={{color:theme.textMuted,fontSize:14,padding:"3px 8px",borderRadius:6,background:theme.goldDim,lineHeight:1}}>↻</button>
+          style={{color:theme.textMuted,fontSize:26,padding:"3px 8px",borderRadius:14,background:theme.goldDim,lineHeight:1}}>↻</button>
         <button className="btn" onClick={()=>setVisible(false)}
-          style={{color:theme.textMuted,fontSize:11,padding:"3px 8px",borderRadius:6,background:theme.goldDim,lineHeight:1}}>✕</button>
+          style={{color:theme.textMuted,fontSize:19,padding:"3px 8px",borderRadius:14,background:theme.goldDim,lineHeight:1}}>✕</button>
       </div>
     </div>
   );
@@ -490,12 +506,12 @@ function VoiceRecorder({onTranscript,theme}) {
   const reset = () => { setSt("idle"); setSecs(0); setText(""); liveRef.current=""; };
 
   return (
-    <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:12,padding:16,marginBottom:14}}>
+    <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:16,marginBottom:14}}>
       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:text&&(st==="done"||st==="ai")?10:0}}>
         <div style={{width:9,height:9,borderRadius:"50%",flexShrink:0,
           background:st==="rec"?theme.danger:st==="ai"?theme.gold:theme.textMuted,
           animation:st==="rec"?"recblink 1s ease infinite":st==="ai"?"pulse 0.8s ease infinite":"none"}}/>
-        <span style={{fontFamily:"'Jost',sans-serif",fontWeight:600,fontSize:13,color:theme.text}}>
+        <span style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:600,fontSize:19,color:theme.text}}>
           {st==="idle"?"🎙 Voice Recording"
            :st==="rec"?`Recording… ${fmt(secs)}`
            :st==="ai"?"✦ AI Transcribing…"
@@ -505,14 +521,14 @@ function VoiceRecorder({onTranscript,theme}) {
         {st==="idle"&&(
           <button className="btn" onClick={start}
             style={{background:theme.dangerDim,color:theme.danger,border:`1px solid ${theme.danger}55`,
-              padding:"7px 16px",borderRadius:8,fontSize:12,fontFamily:"'Jost',sans-serif",fontWeight:700,letterSpacing:"0.05em"}}>
+              padding:"7px 16px",borderRadius:16,fontSize:26,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.01em"}}>
             ● REC
           </button>
         )}
         {st==="rec"&&(
           <button className="btn" onClick={stop}
             style={{background:theme.danger,color:"#fff",border:"none",
-              padding:"7px 16px",borderRadius:8,fontSize:12,fontFamily:"'Jost',sans-serif",fontWeight:700,letterSpacing:"0.05em"}}>
+              padding:"7px 16px",borderRadius:16,fontSize:26,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.01em"}}>
             ■ STOP
           </button>
         )}
@@ -525,15 +541,15 @@ function VoiceRecorder({onTranscript,theme}) {
         {st==="done"&&(
           <button className="btn" onClick={reset}
             style={{background:theme.surface2,color:theme.textMuted,border:`1px solid ${theme.border}`,
-              padding:"5px 12px",borderRadius:8,fontSize:11,fontFamily:"'Jost',sans-serif"}}>
+              padding:"5px 12px",borderRadius:16,fontSize:19,fontFamily:"'Plus Jakarta Sans',sans-serif"}}>
             Record again
           </button>
         )}
       </div>
       {text&&(st==="ai"||st==="done")&&(
-        <div style={{background:theme.surface2,border:`1px solid ${theme.border}`,borderRadius:8,
-          padding:"10px 14px",fontSize:14,color:theme.textSoft,
-          fontFamily:"'Cormorant Garamond',Georgia,serif",lineHeight:1.65,fontStyle:"italic"}}>
+        <div style={{background:theme.surface2,border:`1px solid ${theme.border}`,borderRadius:16,
+          padding:"10px 14px",fontSize:26,color:theme.textSoft,
+          fontFamily:"'Lora',Georgia,serif",lineHeight:1.65,fontStyle:"italic"}}>
           "{text}"
         </div>
       )}
@@ -603,16 +619,16 @@ function BulletEditor({value,onChange,theme,rows=9,minH=160}) {
       <textarea ref={ref} value={value} onChange={e=>onChange(e.target.value)} onKeyDown={handleKey}
         rows={rows}
         placeholder={"• Start typing your meeting notes…\n  • Tab to indent (level 2)\n    • Tab again (level 3)\n  • Shift+Tab to outdent\nEnter auto-continues bullets"}
-        style={{width:"100%",fontSize:15,lineHeight:1.75,background:theme.surface2,
-          border:`1px solid ${theme.border}`,color:theme.text,borderRadius:10,padding:"13px 15px",
-          fontFamily:"'Cormorant Garamond',Georgia,serif",outline:"none",resize:"vertical",
+        style={{width:"100%",fontSize:19,lineHeight:1.75,background:theme.surface2,
+          border:`1px solid ${theme.border}`,color:theme.text,borderRadius:14,padding:"13px 15px",
+          fontFamily:"'Lora',Georgia,serif",outline:"none",resize:"vertical",
           minHeight:minH,whiteSpace:"pre-wrap",letterSpacing:"0.01em"}}/>
       <div style={{position:"absolute",bottom:10,right:10,display:"flex",gap:5}}>
         {["L1","L2","L3"].map((l,i)=>(
           <button key={l} className="btn" onClick={()=>insertBullet(i)}
-            style={{fontSize:9,padding:"2px 7px",borderRadius:4,cursor:"pointer",
+            style={{fontSize:19,padding:"2px 7px",borderRadius:16,cursor:"pointer",
               background:theme.goldDim,color:theme.gold,border:`1px solid ${theme.gold}44`,
-              fontFamily:"'JetBrains Mono',monospace",fontWeight:500}}>
+              fontFamily:"'DM Mono',monospace",fontWeight:500}}>
             {l}
           </button>
         ))}
@@ -627,17 +643,17 @@ function BulletEditor({value,onChange,theme,rows=9,minH=160}) {
 function AISummaryBlock({summary,busy,onGenerate,theme}) {
   return (
     <div style={{background:`linear-gradient(140deg,${theme.goldDim},transparent)`,
-      border:`1px solid ${theme.gold}44`,borderRadius:12,padding:16,marginBottom:14}}>
+      border:`1px solid ${theme.gold}44`,borderRadius:16,padding:16,marginBottom:14}}>
       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:summary?10:0}}>
-        <span style={{fontSize:15,lineHeight:1}}>✦</span>
-        <span style={{fontFamily:"'Jost',sans-serif",fontWeight:800,fontSize:11,
-          color:theme.gold,textTransform:"uppercase",letterSpacing:"0.12em"}}>AI Summary</span>
+        <span style={{fontSize:19,lineHeight:1}}>✦</span>
+        <span style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,
+          color:theme.gold,textTransform:"uppercase",letterSpacing:"0.01em"}}>AI Summary</span>
         <div style={{flex:1}}/>
         {!busy&&(
           <button className="btn" onClick={onGenerate}
-            style={{fontSize:11,color:theme.gold,background:theme.goldDim,
-              border:`1px solid ${theme.gold}44`,padding:"3px 11px",borderRadius:6,
-              fontFamily:"'Jost',sans-serif",fontWeight:700}}>
+            style={{fontSize:19,color:theme.gold,background:theme.goldDim,
+              border:`1px solid ${theme.gold}44`,padding:"3px 11px",borderRadius:14,
+              fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700}}>
             {summary?"↻ Refresh":"Generate"}
           </button>
         )}
@@ -649,18 +665,18 @@ function AISummaryBlock({summary,busy,onGenerate,theme}) {
         )}
       </div>
       {!summary&&!busy&&(
-        <p style={{fontSize:13,color:theme.textMuted,fontStyle:"italic",fontFamily:"'Cormorant Garamond',serif"}}>
+        <p style={{fontSize:19,color:theme.textMuted,fontStyle:"italic",fontFamily:"'Lora',Georgia,serif"}}>
           Press Generate to create an AI summary of this note.
         </p>
       )}
       {busy&&!summary&&(
-        <p style={{fontSize:13,color:theme.textMuted,fontStyle:"italic",fontFamily:"'Cormorant Garamond',serif"}}>
+        <p style={{fontSize:19,color:theme.textMuted,fontStyle:"italic",fontFamily:"'Lora',Georgia,serif"}}>
           Analysing note content…
         </p>
       )}
       {summary&&(
-        <p style={{fontFamily:"'Cormorant Garamond',Georgia,serif",fontStyle:"italic",
-          fontSize:15,lineHeight:1.7,color:theme.text,letterSpacing:"0.01em"}}>
+        <p style={{fontFamily:"'Lora',Georgia,serif",fontStyle:"italic",
+          fontSize:19,lineHeight:1.7,color:theme.text,letterSpacing:"0.01em"}}>
           {summary}
         </p>
       )}
@@ -718,8 +734,8 @@ function EmailModal({note,tasks,theme,onClose}) {
     setTimeout(onClose,2200);
   };
 
-  const inp = {width:"100%",fontSize:13,background:theme.surface2,border:`1px solid ${theme.border}`,
-    color:theme.text,borderRadius:8,padding:"9px 12px",fontFamily:"'Jost',sans-serif",outline:"none",marginBottom:12};
+  const inp = {width:"100%",fontSize:19,background:theme.surface2,border:`1px solid ${theme.border}`,
+    color:theme.text,borderRadius:16,padding:"9px 12px",fontFamily:"'Plus Jakarta Sans',sans-serif",outline:"none",marginBottom:12};
 
   return (
     <div style={{position:"fixed",inset:0,background:"#00000099",zIndex:2000,
@@ -729,12 +745,12 @@ function EmailModal({note,tasks,theme,onClose}) {
         width:"100%",maxWidth:560,border:`1px solid ${theme.border}`,borderBottom:"none",
         maxHeight:"88vh",overflowY:"auto"}}>
         <div style={{display:"flex",alignItems:"center",marginBottom:20}}>
-          <span style={{fontFamily:"'Jost',sans-serif",fontWeight:800,fontSize:16,color:theme.text}}>
+          <span style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:26,color:theme.text}}>
             📧 Email Meeting Notes
           </span>
           <div style={{flex:1}}/>
           <button className="btn" onClick={onClose}
-            style={{color:theme.textMuted,fontSize:22,lineHeight:1}}>✕</button>
+            style={{color:theme.textMuted,fontSize:26,lineHeight:1}}>✕</button>
         </div>
 
         <label style={lbl(theme)}>To (comma-separated)</label>
@@ -745,8 +761,8 @@ function EmailModal({note,tasks,theme,onClose}) {
         <input value={subj} onChange={e=>setSubj(e.target.value)} style={inp}/>
 
         <label style={{...lbl(theme),marginBottom:5}}>Email Preview</label>
-        <div style={{background:theme.surface2,border:`1px solid ${theme.border}`,borderRadius:8,padding:12,
-          marginBottom:20,fontSize:11,color:theme.textSoft,fontFamily:"'JetBrains Mono',monospace",
+        <div style={{background:theme.surface2,border:`1px solid ${theme.border}`,borderRadius:16,padding:12,
+          marginBottom:20,fontSize:19,color:theme.textSoft,fontFamily:"'DM Mono',monospace",
           whiteSpace:"pre-wrap",lineHeight:1.55,maxHeight:170,overflowY:"auto"}}>
           {body.substring(0,500)}…
         </div>
@@ -754,12 +770,12 @@ function EmailModal({note,tasks,theme,onClose}) {
         <div style={{display:"flex",gap:8}}>
           <button className="btn" onClick={onClose}
             style={{flex:1,padding:"12px 0",background:theme.surface2,color:theme.textMuted,
-              border:`1px solid ${theme.border}`,borderRadius:10,fontSize:13,
-              fontFamily:"'Jost',sans-serif",fontWeight:700}}>Cancel</button>
+              border:`1px solid ${theme.border}`,borderRadius:14,fontSize:19,
+              fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700}}>Cancel</button>
           <button className="btn" onClick={send} disabled={busy||sent}
             style={{flex:2,padding:"12px 0",background:sent?theme.green:theme.gold,
-              color:theme.bg,border:"none",borderRadius:10,fontSize:13,
-              fontFamily:"'Jost',sans-serif",fontWeight:800,letterSpacing:"0.04em",
+              color:theme.bg,border:"none",borderRadius:14,fontSize:19,
+              fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.01em",
               opacity:busy?0.7:1,transition:"background 0.25s"}}>
             {sent?"✓ Email Client Opened":busy?"Preparing…":"📧 SEND VIA EMAIL APP"}
           </button>
@@ -782,7 +798,7 @@ function SwipeTaskRow({task,theme,isMobile,folderName,folderColor,onToggle,onDel
     <div style={{position:"relative",overflow:"hidden",borderBottom:`1px solid ${theme.border}`}}>
       <div style={{position:"absolute",right:0,top:0,bottom:0,background:theme.danger,
         display:"flex",alignItems:"center",paddingRight:20,gap:6}}>
-        <span style={{color:"#fff",fontSize:11,fontFamily:"'Jost',sans-serif",fontWeight:700,letterSpacing:"0.06em"}}>DELETE</span>
+        <span style={{color:"#fff",fontSize:19,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.02em"}}>DELETE</span>
       </div>
       <div
         onTouchStart={e=>{x0.current=e.touches[0].clientX;setSw(true);}}
@@ -792,33 +808,33 @@ function SwipeTaskRow({task,theme,isMobile,folderName,folderColor,onToggle,onDel
         style={{display:"flex",alignItems:"flex-start",gap:11,padding:"13px 2px",background:theme.bg,
           transform:`translateX(${sx}px)`,transition:sw?"none":"transform 0.22s ease",position:"relative",zIndex:1}}>
         <button className="btn" onClick={onToggle}
-          style={{fontSize:17,flexShrink:0,marginTop:1,color:task.done?theme.green:theme.textMuted}}>
+          style={{fontSize:19,flexShrink:0,marginTop:1,color:task.done?theme.green:theme.textMuted}}>
           {task.done?"✔":"○"}
         </button>
         <div style={{flex:1,minWidth:0}}>
           {task._fromNote&&(
-            <div style={{fontSize:9,color:theme.gold,fontFamily:"'JetBrains Mono',monospace",
-              textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:2}}>
+            <div style={{fontSize:19,color:theme.gold,fontFamily:"'DM Mono',monospace",
+              textTransform:"uppercase",letterSpacing:"0.02em",marginBottom:2}}>
               ↗ {task._noteSubject}
               {onNoteClick&&<span className="btn" onClick={onNoteClick} style={{marginLeft:6,textDecoration:"underline",cursor:"pointer"}}>view</span>}
             </div>
           )}
-          <div style={{fontSize:14,fontFamily:"'Cormorant Garamond',Georgia,serif",fontWeight:task.done?400:500,
+          <div style={{fontSize:26,fontFamily:"'Lora',Georgia,serif",fontWeight:task.done?400:500,
             color:task.done?theme.textMuted:theme.text,textDecoration:task.done?"line-through":"none",lineHeight:1.45}}>
             {task.text}
           </div>
           <div style={{display:"flex",gap:10,marginTop:4,flexWrap:"wrap",alignItems:"center"}}>
-            {task.owner&&<span style={{fontSize:10,color:theme.gold,fontFamily:"'Jost',sans-serif",fontWeight:600}}>◈ {task.owner}</span>}
-            {task.deadline&&<span style={{fontSize:10,color:theme.textMuted,fontFamily:"'JetBrains Mono',monospace"}}>{task.deadline}</span>}
-            {folderName&&<span style={{fontSize:10,fontFamily:"'Jost',sans-serif",fontWeight:500,color:folderColor}}>● {folderName}</span>}
+            {task.owner&&<span style={{fontSize:26,color:theme.gold,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:600}}>◈ {task.owner}</span>}
+            {task.deadline&&<span style={{fontSize:26,color:theme.textMuted,fontFamily:"'DM Mono',monospace"}}>{task.deadline}</span>}
+            {folderName&&<span style={{fontSize:26,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:500,color:folderColor}}>● {folderName}</span>}
           </div>
         </div>
         {!isMobile&&<select value={task.segment} onChange={e=>onSegChange(e.target.value)}
-          style={{fontSize:10,padding:"2px 5px",background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,flexShrink:0}}>
+          style={{fontSize:26,padding:"2px 5px",background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,flexShrink:0}}>
           {SEGMENTS.map(s=><option key={s.key} value={s.key}>{s.label}</option>)}
         </select>}
         <button className="btn task-del" onClick={onDelete}
-          style={{opacity:isMobile?1:0,color:theme.danger,fontSize:14,lineHeight:1,flexShrink:0,transition:"opacity 0.15s"}}>✕</button>
+          style={{opacity:isMobile?1:0,color:theme.danger,fontSize:26,lineHeight:1,flexShrink:0,transition:"opacity 0.15s"}}>✕</button>
       </div>
     </div>
   );
@@ -840,65 +856,65 @@ function APPanel({tasks,theme,isMobile,onAdd,onToggle,onDelete,onSegChange}) {
   };
 
   return (
-    <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:12,padding:16,marginBottom:14}}>
+    <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:16,marginBottom:14}}>
       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
-        <span style={{fontSize:15,lineHeight:1}}>⚡</span>
-        <span style={{fontFamily:"'Jost',sans-serif",fontWeight:800,fontSize:11,
-          color:theme.gold,textTransform:"uppercase",letterSpacing:"0.12em"}}>Action Points</span>
-        <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,color:theme.textMuted,marginLeft:2}}>
+        <span style={{fontSize:19,lineHeight:1}}>⚡</span>
+        <span style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,
+          color:theme.gold,textTransform:"uppercase",letterSpacing:"0.01em"}}>Action Points</span>
+        <span style={{fontFamily:"'DM Mono',monospace",fontSize:26,color:theme.textMuted,marginLeft:2}}>
           ({tasks.filter(t=>!t.done).length} open)
         </span>
         <div style={{flex:1}}/>
-        <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:9,color:theme.textMuted}}>→ syncs to To-Dos</span>
+        <span style={{fontFamily:"'DM Mono',monospace",fontSize:19,color:theme.textMuted}}>→ syncs to To-Dos</span>
       </div>
 
       {tasks.map(t=>(
         <div key={t.id} className="task-row"
           style={{display:"flex",alignItems:"flex-start",gap:8,padding:"9px 0",borderBottom:`1px solid ${theme.borderSoft}`}}>
           <button className="btn" onClick={()=>onToggle(t.id)}
-            style={{fontSize:15,flexShrink:0,marginTop:1,color:t.done?theme.green:theme.textMuted}}>
+            style={{fontSize:19,flexShrink:0,marginTop:1,color:t.done?theme.green:theme.textMuted}}>
             {t.done?"✔":"○"}
           </button>
           <div style={{flex:1,minWidth:0}}>
-            <div style={{fontSize:14,fontFamily:"'Cormorant Garamond',Georgia,serif",fontWeight:500,
+            <div style={{fontSize:26,fontFamily:"'Lora',Georgia,serif",fontWeight:500,
               color:t.done?theme.textMuted:theme.text,textDecoration:t.done?"line-through":"none",lineHeight:1.4}}>
               {t.text}
             </div>
             <div style={{display:"flex",gap:10,marginTop:3}}>
-              {t.owner&&<span style={{fontSize:10,color:theme.gold,fontFamily:"'Jost',sans-serif",fontWeight:600}}>◈ {t.owner}</span>}
-              {t.deadline&&<span style={{fontSize:10,color:theme.textMuted,fontFamily:"'JetBrains Mono',monospace"}}>{t.deadline}</span>}
-              <span style={{fontSize:9,color:theme.textMuted,fontFamily:"'JetBrains Mono',monospace",textTransform:"uppercase"}}>{t.segment}</span>
+              {t.owner&&<span style={{fontSize:26,color:theme.gold,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:600}}>◈ {t.owner}</span>}
+              {t.deadline&&<span style={{fontSize:26,color:theme.textMuted,fontFamily:"'DM Mono',monospace"}}>{t.deadline}</span>}
+              <span style={{fontSize:19,color:theme.textMuted,fontFamily:"'DM Mono',monospace",textTransform:"uppercase"}}>{t.segment}</span>
             </div>
           </div>
           {!isMobile&&<select value={t.segment} onChange={e=>onSegChange(t.id,e.target.value)}
-            style={{fontSize:10,padding:"2px 5px",background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,flexShrink:0}}>
+            style={{fontSize:26,padding:"2px 5px",background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,flexShrink:0}}>
             {SEGMENTS.map(s=><option key={s.key} value={s.key}>{s.label}</option>)}
           </select>}
           <button className="btn task-del" onClick={()=>onDelete(t.id)}
-            style={{opacity:isMobile?1:0,color:theme.danger,fontSize:13,lineHeight:1,flexShrink:0,transition:"opacity 0.15s"}}>✕</button>
+            style={{opacity:isMobile?1:0,color:theme.danger,fontSize:19,lineHeight:1,flexShrink:0,transition:"opacity 0.15s"}}>✕</button>
         </div>
       ))}
 
       <div style={{marginTop:12,display:"flex",gap:6,flexWrap:"wrap"}}>
         <input value={txt} onChange={e=>setTxt(e.target.value)} placeholder="Action item description…"
           onKeyDown={e=>e.key==="Enter"&&add()}
-          style={{flex:"1 1 160px",fontSize:14,background:theme.surface2,border:`1px solid ${theme.border}`,
-            color:theme.text,borderRadius:8,padding:"8px 11px",fontFamily:"'Cormorant Garamond',Georgia,serif",
+          style={{flex:"1 1 160px",fontSize:26,background:theme.surface2,border:`1px solid ${theme.border}`,
+            color:theme.text,borderRadius:16,padding:"8px 11px",fontFamily:"'Lora',Georgia,serif",
             outline:"none",minWidth:0}}/>
         <input value={owner} onChange={e=>setOwner(e.target.value)} placeholder="Owner"
-          style={{width:88,fontSize:12,background:theme.surface2,border:`1px solid ${theme.border}`,
-            color:theme.text,borderRadius:8,padding:"8px 10px",fontFamily:"'Jost',sans-serif",outline:"none"}}/>
+          style={{width:88,fontSize:26,background:theme.surface2,border:`1px solid ${theme.border}`,
+            color:theme.text,borderRadius:16,padding:"8px 10px",fontFamily:"'Plus Jakarta Sans',sans-serif",outline:"none"}}/>
         <input type="date" value={dl} onChange={e=>setDl(e.target.value)}
-          style={{fontSize:11,background:theme.surface2,border:`1px solid ${theme.border}`,
-            color:theme.text,borderRadius:8,padding:"8px 8px",fontFamily:"'JetBrains Mono',monospace",outline:"none"}}/>
+          style={{fontSize:19,background:theme.surface2,border:`1px solid ${theme.border}`,
+            color:theme.text,borderRadius:16,padding:"8px 8px",fontFamily:"'DM Mono',monospace",outline:"none"}}/>
         <select value={seg} onChange={e=>setSeg(e.target.value)}
-          style={{fontSize:11,background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,borderRadius:8,padding:"8px 8px"}}>
+          style={{fontSize:19,background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,borderRadius:16,padding:"8px 8px"}}>
           {SEGMENTS.map(s=><option key={s.key} value={s.key}>{s.label}</option>)}
         </select>
         <button className="btn" onClick={add}
           style={{background:theme.gold,color:theme.bg,border:"none",padding:"8px 16px",
-            borderRadius:8,fontSize:12,fontFamily:"'Jost',sans-serif",fontWeight:800,
-            letterSpacing:"0.06em",whiteSpace:"nowrap"}}>+ ADD</button>
+            borderRadius:16,fontSize:26,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,
+            letterSpacing:"0.02em",whiteSpace:"nowrap"}}>+ ADD</button>
       </div>
     </div>
   );
@@ -936,7 +952,7 @@ function NoteEditor({note,folders,tasks,isMobile,theme,onBack,onDelete,onNoteCha
       {/* Toolbar */}
       <div style={{display:"flex",alignItems:"center",gap:isMobile?6:8,marginBottom:16,flexWrap:"wrap"}}>
         <button className="btn" onClick={onBack}
-          style={{color:theme.gold,fontSize:24,lineHeight:1,padding:"0 2px"}}>←</button>
+          style={{color:theme.gold,fontSize:26,lineHeight:1,padding:"0 2px"}}>←</button>
         <select value={note.folder_id||""} onChange={e=>set("folder_id",e.target.value||null)}
           style={{fontSize:isMobile?11:12,background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text}}>
           <option value="">No folder</option>
@@ -947,8 +963,8 @@ function NoteEditor({note,folders,tasks,isMobile,theme,onBack,onDelete,onNoteCha
         <div style={{flex:1}}/>
         <button className="btn" onClick={onEmail}
           style={{background:"#3a7bd522",color:"#5a9df7",border:"1px solid #3a7bd544",
-            padding:"6px 12px",borderRadius:8,fontSize:isMobile?11:12,
-            fontFamily:"'Jost',sans-serif",fontWeight:700,letterSpacing:"0.04em"}}>
+            padding:"6px 12px",borderRadius:16,fontSize:isMobile?11:12,
+            fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.01em"}}>
           {isMobile?"📧":"📧 EMAIL"}
         </button>
         <button className="btn" onClick={onDelete}
@@ -959,10 +975,10 @@ function NoteEditor({note,folders,tasks,isMobile,theme,onBack,onDelete,onNoteCha
       <input defaultValue={note.subject} key={note.id+"-s"}
         onChange={e=>set("subject",e.target.value)}
         placeholder="Meeting title…"
-        style={{fontSize:isMobile?20:22,fontFamily:"'Jost',sans-serif",fontWeight:800,
+        style={{fontSize:isMobile?20:22,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,
           background:"transparent",border:"none",borderBottom:`2px solid ${theme.border}`,
           borderRadius:0,padding:"5px 0",marginBottom:14,color:theme.text,width:"100%",
-          outline:"none",letterSpacing:"-0.4px",lineHeight:1.2}}/>
+          outline:"none",letterSpacing:"-0.2px",lineHeight:1.2}}/>
 
       {/* Participants */}
       <div style={{marginBottom:14}}>
@@ -971,8 +987,8 @@ function NoteEditor({note,folders,tasks,isMobile,theme,onBack,onDelete,onNoteCha
           defaultValue={(note.participants||[]).join(", ")} key={note.id+"-p"}
           onChange={e=>set("participants",e.target.value.split(",").map(x=>x.trim()).filter(Boolean))}
           placeholder="email@example.com, colleague@company.com"
-          style={{width:"100%",fontSize:12,background:theme.surface2,border:`1px solid ${theme.border}`,
-            color:theme.text,borderRadius:8,padding:"8px 11px",fontFamily:"'Jost',sans-serif",outline:"none"}}/>
+          style={{width:"100%",fontSize:26,background:theme.surface2,border:`1px solid ${theme.border}`,
+            color:theme.text,borderRadius:16,padding:"8px 11px",fontFamily:"'Plus Jakarta Sans',sans-serif",outline:"none"}}/>
       </div>
 
       {/* Voice Recorder */}
@@ -982,7 +998,7 @@ function NoteEditor({note,folders,tasks,isMobile,theme,onBack,onDelete,onNoteCha
       <div style={{marginBottom:14}}>
         <label style={{...lbl(theme),display:"flex",gap:10,alignItems:"center"}}>
           <span>Notes</span>
-          <span style={{color:theme.gold,fontFamily:"'JetBrains Mono',monospace",fontSize:9}}>Tab=indent · Shift+Tab=outdent · Enter=new bullet</span>
+          <span style={{color:theme.gold,fontFamily:"'DM Mono',monospace",fontSize:19}}>Tab=indent · Shift+Tab=outdent · Enter=new bullet</span>
         </label>
         <BulletEditor
           value={note.note}
@@ -1012,8 +1028,8 @@ function NoteEditor({note,folders,tasks,isMobile,theme,onBack,onDelete,onNoteCha
       {/* Save btn — mobile */}
       {isMobile&&(
         <button className="btn" onClick={onBack}
-          style={{background:theme.gold,color:theme.bg,padding:"13px 0",borderRadius:10,width:"100%",
-            fontSize:13,border:"none",fontFamily:"'Jost',sans-serif",fontWeight:800,letterSpacing:"0.06em",marginBottom:10}}>
+          style={{background:theme.gold,color:theme.bg,padding:"13px 0",borderRadius:14,width:"100%",
+            fontSize:19,border:"none",fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.02em",marginBottom:10}}>
           ✓ SAVE & CLOSE
         </button>
       )}
@@ -1039,25 +1055,25 @@ function CalendarView({notes,calDate,setCalDate,calNotes,theme,isMobile,onNoteCl
   return (
     <div style={{maxWidth:680,margin:"0 auto"}}>
       <div style={{display:"flex",alignItems:"center",marginBottom:18,gap:10}}>
-        <h1 style={{fontFamily:"'Jost',sans-serif",fontSize:isMobile?19:22,fontWeight:800,color:theme.text,letterSpacing:"-0.3px"}}>
+        <h1 style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontSize:isMobile?19:22,fontWeight:700,color:theme.text,letterSpacing:"-0.2px"}}>
           Calendar
         </h1>
         <div style={{flex:1}}/>
         <button className="btn" onClick={onNewNote}
-          style={{background:theme.gold,color:theme.bg,padding:"7px 16px",borderRadius:8,fontSize:12,
-            border:"none",fontFamily:"'Jost',sans-serif",fontWeight:800,letterSpacing:"0.05em"}}>+ NEW NOTE</button>
+          style={{background:theme.gold,color:theme.bg,padding:"7px 16px",borderRadius:16,fontSize:26,
+            border:"none",fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.01em"}}>+ NEW NOTE</button>
       </div>
 
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
-        <button className="btn" onClick={prev} style={{color:theme.gold,fontSize:24,padding:"4px 10px"}}>‹</button>
-        <span style={{fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:15,color:theme.text}}>{mName}</span>
-        <button className="btn" onClick={next} style={{color:theme.gold,fontSize:24,padding:"4px 10px"}}>›</button>
+        <button className="btn" onClick={prev} style={{color:theme.gold,fontSize:26,padding:"4px 10px"}}>‹</button>
+        <span style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,color:theme.text}}>{mName}</span>
+        <button className="btn" onClick={next} style={{color:theme.gold,fontSize:26,padding:"4px 10px"}}>›</button>
       </div>
 
       <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3,marginBottom:4}}>
         {["Su","Mo","Tu","We","Th","Fr","Sa"].map(d=>(
-          <div key={d} style={{textAlign:"center",fontSize:10,color:theme.textMuted,
-            fontFamily:"'JetBrains Mono',monospace",padding:"3px 0",letterSpacing:"0.05em"}}>{d}</div>
+          <div key={d} style={{textAlign:"center",fontSize:26,color:theme.textMuted,
+            fontFamily:"'DM Mono',monospace",padding:"3px 0",letterSpacing:"0.01em"}}>{d}</div>
         ))}
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3,marginBottom:20}}>
@@ -1067,12 +1083,12 @@ function CalendarView({notes,calDate,setCalDate,calNotes,theme,isMobile,onNoteCl
           const isTd=iso===isoToday(),isSel=iso===calDate,has=!!byDate[iso];
           return (
             <button key={i} className="btn" onClick={()=>setCalDate(iso)}
-              style={{aspectRatio:"1",borderRadius:8,fontSize:isMobile?12:13,fontWeight:isTd?700:400,
+              style={{aspectRatio:"1",borderRadius:16,fontSize:isMobile?12:13,fontWeight:isTd?700:400,
                 background:isSel?theme.gold:isTd?theme.goldDim:theme.surface2,
                 color:isSel?theme.bg:isTd?theme.gold:theme.text,
                 border:`1px solid ${isSel?theme.gold:isTd?theme.gold:theme.border}`,
                 display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
-                gap:2,fontFamily:"'Jost',sans-serif",transition:"all 0.12s"}}>
+                gap:2,fontFamily:"'Plus Jakarta Sans',sans-serif",transition:"all 0.12s"}}>
               {day}
               {has&&<span style={{width:4,height:4,borderRadius:"50%",background:isSel?theme.bg:theme.gold}}/>}
             </button>
@@ -1080,25 +1096,25 @@ function CalendarView({notes,calDate,setCalDate,calNotes,theme,isMobile,onNoteCl
         })}
       </div>
 
-      <div style={{fontFamily:"'Jost',sans-serif",fontWeight:800,fontSize:12,
-        color:theme.textMuted,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>
+      <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:26,
+        color:theme.textMuted,textTransform:"uppercase",letterSpacing:"0.02em",marginBottom:10}}>
         {new Date(calDate+"T12:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})}
       </div>
       {calNotes.length===0
-        ? <p style={{color:theme.textMuted,fontStyle:"italic",fontFamily:"'Cormorant Garamond',serif",textAlign:"center",marginTop:24,fontSize:16}}>
+        ? <p style={{color:theme.textMuted,fontStyle:"italic",fontFamily:"'Lora',Georgia,serif",textAlign:"center",marginTop:24,fontSize:26}}>
             No notes for this day.
           </p>
         : calNotes.map(n=>(
           <div key={n.id} onClick={()=>onNoteClick(n)}
-            style={{background:theme.card,border:`1px solid ${theme.border}`,borderRadius:12,padding:14,marginBottom:10,cursor:"pointer",transition:"all 0.15s"}}
+            style={{background:theme.card,border:`1px solid ${theme.border}`,borderRadius:16,padding:14,marginBottom:10,cursor:"pointer",transition:"all 0.15s"}}
             onMouseEnter={e=>e.currentTarget.style.borderColor=theme.gold}
             onMouseLeave={e=>e.currentTarget.style.borderColor=theme.border}>
-            <div style={{fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:14,color:theme.text,marginBottom:4}}>{n.subject||"Untitled"}</div>
-            <div style={{fontSize:13,color:theme.textSoft,fontFamily:"'Cormorant Garamond',serif",lineHeight:1.5,
+            <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:26,color:theme.text,marginBottom:4}}>{n.subject||"Untitled"}</div>
+            <div style={{fontSize:19,color:theme.textSoft,fontFamily:"'Lora',Georgia,serif",lineHeight:1.5,
               overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>
               {n.note?.replace(/[•\s]+/g," ").trim()}
             </div>
-            {n.ai_summary&&<div style={{marginTop:8,fontSize:12,color:theme.gold,fontStyle:"italic",fontFamily:"'Cormorant Garamond',serif"}}>✦ {n.ai_summary.substring(0,100)}…</div>}
+            {n.ai_summary&&<div style={{marginTop:8,fontSize:26,color:theme.gold,fontStyle:"italic",fontFamily:"'Lora',Georgia,serif"}}>✦ {n.ai_summary.substring(0,100)}…</div>}
           </div>
         ))
       }
@@ -1137,14 +1153,14 @@ function ReflectionView({reflection,onSave,theme,isMobile,allReflections}) {
   return (
     <div style={{maxWidth:680,margin:"0 auto"}}>
       <div style={{display:"flex",alignItems:"center",marginBottom:18,gap:10}}>
-        <h1 style={{fontFamily:"'Jost',sans-serif",fontSize:isMobile?19:22,fontWeight:800,color:theme.text,letterSpacing:"-0.3px"}}>
+        <h1 style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontSize:isMobile?19:22,fontWeight:700,color:theme.text,letterSpacing:"-0.2px"}}>
           🌿 Reflections
         </h1>
         <div style={{flex:1}}/>
         <div style={{display:"flex",gap:4,background:theme.surface2,borderRadius:20,padding:3}}>
           {["today","history"].map(t=>(
             <button key={t} className="btn" onClick={()=>setTab(t)}
-              style={{padding:"4px 13px",borderRadius:16,fontSize:11,fontFamily:"'Jost',sans-serif",fontWeight:700,
+              style={{padding:"4px 13px",borderRadius:16,fontSize:19,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,
                 background:tab===t?theme.gold:"transparent",color:tab===t?theme.bg:theme.textMuted,border:"none"}}>
               {t==="today"?"Today":"History"}
             </button>
@@ -1154,59 +1170,59 @@ function ReflectionView({reflection,onSave,theme,isMobile,allReflections}) {
 
       {tab==="today"&&(
         <div>
-          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,color:theme.textMuted,marginBottom:16,letterSpacing:"0.05em"}}>
+          <div style={{fontFamily:"'DM Mono',monospace",fontSize:26,color:theme.textMuted,marginBottom:16,letterSpacing:"0.01em"}}>
             {new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
           </div>
-          <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:12,padding:16,marginBottom:14}}>
-            <div style={{fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:13,color:theme.text,marginBottom:12}}>How are you feeling today?</div>
+          <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:16,marginBottom:14}}>
+            <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,color:theme.text,marginBottom:12}}>How are you feeling today?</div>
             <div style={{display:"flex",gap:isMobile?8:14,justifyContent:"center",flexWrap:"wrap"}}>
               {MOODS.map(m=>(
                 <button key={m.value} className="btn" onClick={()=>setMood(m.value)}
-                  style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,padding:"10px 13px",borderRadius:12,
+                  style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,padding:"10px 13px",borderRadius:16,
                     background:mood===m.value?theme.goldDim:theme.surface2,
                     border:`2px solid ${mood===m.value?theme.gold:theme.border}`,transition:"all 0.15s"}}>
-                  <span style={{fontSize:24}}>{m.emoji}</span>
-                  <span style={{fontSize:10,fontFamily:"'Jost',sans-serif",fontWeight:700,
+                  <span style={{fontSize:26}}>{m.emoji}</span>
+                  <span style={{fontSize:26,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,
                     color:mood===m.value?theme.gold:theme.textMuted}}>{m.label}</span>
                 </button>
               ))}
             </div>
           </div>
-          <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:12,padding:16,marginBottom:14}}>
-            <div style={{fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:13,color:theme.text,marginBottom:8}}>📖 Today's Journal</div>
+          <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:16,marginBottom:14}}>
+            <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,color:theme.text,marginBottom:8}}>📖 Today's Journal</div>
             <textarea value={journal} onChange={e=>setJournal(e.target.value)}
               placeholder="What happened today? How did it make you feel? What did you learn?"
               rows={isMobile?5:6}
-              style={{width:"100%",fontSize:15,background:theme.surface2,border:`1px solid ${theme.border}`,
-                color:theme.text,minHeight:isMobile?100:120,fontFamily:"'Cormorant Garamond',serif",lineHeight:1.65}}/>
+              style={{width:"100%",fontSize:19,background:theme.surface2,border:`1px solid ${theme.border}`,
+                color:theme.text,minHeight:isMobile?100:120,fontFamily:"'Lora',Georgia,serif",lineHeight:1.65}}/>
           </div>
-          <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:12,padding:16,marginBottom:14}}>
-            <div style={{fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:13,color:theme.text,marginBottom:4}}>🙏 Gratitude</div>
-            <div style={{fontSize:13,color:theme.textMuted,fontStyle:"italic",marginBottom:10,fontFamily:"'Cormorant Garamond',serif"}}>{prompt}</div>
+          <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:16,marginBottom:14}}>
+            <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,color:theme.text,marginBottom:4}}>🙏 Gratitude</div>
+            <div style={{fontSize:19,color:theme.textMuted,fontStyle:"italic",marginBottom:10,fontFamily:"'Lora',Georgia,serif"}}>{prompt}</div>
             <textarea value={gratitude} onChange={e=>setGratitude(e.target.value)}
               placeholder="Write what you're grateful for today…" rows={3}
-              style={{width:"100%",fontSize:15,background:theme.surface2,border:`1px solid ${theme.border}`,
-                color:theme.text,fontFamily:"'Cormorant Garamond',serif",lineHeight:1.65}}/>
+              style={{width:"100%",fontSize:19,background:theme.surface2,border:`1px solid ${theme.border}`,
+                color:theme.text,fontFamily:"'Lora',Georgia,serif",lineHeight:1.65}}/>
           </div>
           {aiSummary&&(
             <div style={{background:`linear-gradient(140deg,${theme.goldDim},transparent)`,
-              border:`1px solid ${theme.gold}44`,borderRadius:12,padding:16,marginBottom:14}}>
-              <div style={{fontFamily:"'Jost',sans-serif",fontWeight:800,fontSize:11,
-                color:theme.gold,textTransform:"uppercase",letterSpacing:"0.12em",marginBottom:8}}>✦ AI Reflection</div>
-              <p style={{fontFamily:"'Cormorant Garamond',Georgia,serif",fontStyle:"italic",
-                fontSize:16,color:theme.text,lineHeight:1.7}}>{aiSummary}</p>
+              border:`1px solid ${theme.gold}44`,borderRadius:16,padding:16,marginBottom:14}}>
+              <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,
+                color:theme.gold,textTransform:"uppercase",letterSpacing:"0.01em",marginBottom:8}}>✦ AI Reflection</div>
+              <p style={{fontFamily:"'Lora',Georgia,serif",fontStyle:"italic",
+                fontSize:26,color:theme.text,lineHeight:1.7}}>{aiSummary}</p>
             </div>
           )}
           <div style={{display:"flex",gap:10}}>
             <button className="btn" onClick={gen} disabled={generating}
-              style={{background:theme.goldDim,color:theme.gold,padding:"11px 16px",borderRadius:10,fontSize:12,
-                border:`1px solid ${theme.gold}44`,fontFamily:"'Jost',sans-serif",fontWeight:800,letterSpacing:"0.04em"}}>
+              style={{background:theme.goldDim,color:theme.gold,padding:"11px 16px",borderRadius:14,fontSize:26,
+                border:`1px solid ${theme.gold}44`,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.01em"}}>
               {generating?"✦ Thinking…":"✦ AI REFLECT"}
             </button>
             <button className="btn" onClick={save}
-              style={{background:saved?theme.green:theme.gold,color:theme.bg,padding:"11px 0",borderRadius:10,
-                fontSize:12,border:"none",flex:1,fontFamily:"'Jost',sans-serif",fontWeight:800,
-                letterSpacing:"0.04em",transition:"background 0.25s"}}>
+              style={{background:saved?theme.green:theme.gold,color:theme.bg,padding:"11px 0",borderRadius:14,
+                fontSize:26,border:"none",flex:1,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,
+                letterSpacing:"0.01em",transition:"background 0.25s"}}>
               {saved?"✓ SAVED":"SAVE REFLECTION"}
             </button>
           </div>
@@ -1216,20 +1232,20 @@ function ReflectionView({reflection,onSave,theme,isMobile,allReflections}) {
       {tab==="history"&&(
         <div>
           {allReflections.length===0
-            ? <p style={{color:theme.textMuted,fontStyle:"italic",textAlign:"center",marginTop:36,fontFamily:"'Cormorant Garamond',serif",fontSize:16}}>No past reflections yet — start today ✦</p>
+            ? <p style={{color:theme.textMuted,fontStyle:"italic",textAlign:"center",marginTop:36,fontFamily:"'Lora',Georgia,serif",fontSize:26}}>No past reflections yet — start today ✦</p>
             : allReflections.map(r=>(
-              <div key={r.id} style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:12,padding:16,marginBottom:12}}>
+              <div key={r.id} style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:16,marginBottom:12}}>
                 <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
-                  <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,color:theme.textMuted}}>{fmtDate(r.date)}</span>
-                  {r.mood&&<span style={{fontSize:20}}>{MOODS.find(m=>m.value===r.mood)?.emoji}</span>}
-                  {r.mood&&<span style={{fontSize:11,color:theme.textSoft,fontFamily:"'Jost',sans-serif",fontWeight:600}}>{MOODS.find(m=>m.value===r.mood)?.label}</span>}
+                  <span style={{fontFamily:"'DM Mono',monospace",fontSize:19,color:theme.textMuted}}>{fmtDate(r.date)}</span>
+                  {r.mood&&<span style={{fontSize:26}}>{MOODS.find(m=>m.value===r.mood)?.emoji}</span>}
+                  {r.mood&&<span style={{fontSize:19,color:theme.textSoft,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:600}}>{MOODS.find(m=>m.value===r.mood)?.label}</span>}
                 </div>
-                {r.journal&&<p style={{fontSize:14,color:theme.textSoft,marginBottom:8,lineHeight:1.6,fontFamily:"'Cormorant Garamond',serif"}}>{r.journal}</p>}
-                {r.gratitude&&<p style={{fontSize:13,color:theme.textMuted,fontStyle:"italic",marginBottom:8,fontFamily:"'Cormorant Garamond',serif"}}>🙏 {r.gratitude}</p>}
+                {r.journal&&<p style={{fontSize:26,color:theme.textSoft,marginBottom:8,lineHeight:1.6,fontFamily:"'Lora',Georgia,serif"}}>{r.journal}</p>}
+                {r.gratitude&&<p style={{fontSize:19,color:theme.textMuted,fontStyle:"italic",marginBottom:8,fontFamily:"'Lora',Georgia,serif"}}>🙏 {r.gratitude}</p>}
                 {r.ai_summary&&(
-                  <div style={{background:theme.goldDim,border:`1px solid ${theme.gold}33`,borderRadius:8,padding:"10px 12px"}}>
-                    <div style={{fontSize:9,color:theme.gold,fontFamily:"'Jost',sans-serif",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:4}}>✦ AI</div>
-                    <p style={{fontSize:13,color:theme.text,fontStyle:"italic",lineHeight:1.6,fontFamily:"'Cormorant Garamond',serif"}}>{r.ai_summary}</p>
+                  <div style={{background:theme.goldDim,border:`1px solid ${theme.gold}33`,borderRadius:16,padding:"10px 12px"}}>
+                    <div style={{fontSize:19,color:theme.gold,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.03em",marginBottom:4}}>✦ AI</div>
+                    <p style={{fontSize:19,color:theme.text,fontStyle:"italic",lineHeight:1.6,fontFamily:"'Lora',Georgia,serif"}}>{r.ai_summary}</p>
                   </div>
                 )}
               </div>
@@ -1248,22 +1264,220 @@ function NavItem({icon,label,active,onClick,dot,dotColor,onDelete,theme}) {
   return (
     <div style={{display:"flex",alignItems:"center",position:"relative"}} className="folder-del-wrap">
       <button className={`btn nav-btn${active?" active":""}`} onClick={onClick}
-        style={{display:"flex",alignItems:"center",gap:8,padding:"9px 14px",flex:1,textAlign:"left",fontSize:13,
-          fontFamily:"'Jost',sans-serif",fontWeight:active?700:500,letterSpacing:"0.02em",
-          color:active?theme.gold:theme.textSoft,background:"transparent",transition:"all 0.12s",borderRadius:6,margin:"1px 4px"}}>
+        style={{display:"flex",alignItems:"center",gap:8,padding:"9px 14px",flex:1,textAlign:"left",fontSize:19,
+          fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:active?700:500,letterSpacing:"0.01em",
+          color:active?theme.gold:theme.textSoft,background:"transparent",transition:"all 0.12s",borderRadius:14,margin:"1px 4px"}}>
         {dot?<span style={{width:8,height:8,borderRadius:"50%",background:dotColor,flexShrink:0}}/>:
-             icon&&<span style={{fontSize:15,lineHeight:1}}>{icon}</span>}
+             icon&&<span style={{fontSize:19,lineHeight:1}}>{icon}</span>}
         {label}
       </button>
       {onDelete&&<button className="btn folder-del" onClick={e=>{e.stopPropagation();onDelete();}}
-        style={{opacity:0,position:"absolute",right:10,color:theme.danger,fontSize:11,transition:"opacity 0.15s"}}>✕</button>}
+        style={{opacity:0,position:"absolute",right:10,color:theme.danger,fontSize:19,transition:"opacity 0.15s"}}>✕</button>}
     </div>
   );
 }
 
 function EmptyState({theme,text}) {
   return <div style={{color:theme.textMuted,fontStyle:"italic",marginTop:36,textAlign:"center",
-    fontFamily:"'Cormorant Garamond',serif",fontSize:16}}>{text}</div>;
+    fontFamily:"'Lora',Georgia,serif",fontSize:26}}>{text}</div>;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  HOME DASHBOARD
+// ════════════════════════════════════════════════════════════════
+function HomeDashboard({ theme, notes, tasks, allTasks, quote, qFade, onNextQuote, onNav, onNoteClick }) {
+  const todayTasks = allTasks.filter(t => t.segment==="today"     && !t.done);
+  const weekTasks  = allTasks.filter(t => t.segment==="this-week" && !t.done);
+  const topNotes   = [...notes].slice(0, 5);
+  const todayDone  = allTasks.filter(t => t.segment==="today" && t.done).length;
+  const todayTotal = allTasks.filter(t => t.segment==="today").length;
+
+  return (
+    <div className="fade-in">
+
+      {/* Hero quote card */}
+      <div style={{ background:theme.dashHero,borderRadius:16,padding:"24px 22px 20px",marginBottom:16,
+        border:`1px solid ${theme.quoteBorder}`,position:"relative",overflow:"hidden" }}>
+        <div style={{ position:"absolute",top:-20,right:4,fontSize:160,color:theme.gold,
+          opacity:0.05,fontFamily:"'Lora',Georgia,serif",lineHeight:1,userSelect:"none",pointerEvents:"none" }}>"</div>
+        <div style={{ opacity:qFade?1:0,transition:"opacity 0.28s" }}>
+          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:12,
+            color:theme.gold,textTransform:"uppercase",letterSpacing:"0.02em",marginBottom:8 }}>
+            ✦ QUOTE OF THE DAY
+          </div>
+          <p style={{ fontFamily:"'Lora',Georgia,serif",fontStyle:"italic",fontWeight:700,fontSize:28,
+            color:theme.quoteText,lineHeight:1.45,marginBottom:10,paddingRight:32 }}>
+            "{quote?.text||quote?.t}"
+          </p>
+          <div style={{ display:"flex",gap:10,alignItems:"center",justifyContent:"space-between" }}>
+            <div>
+              <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:15,color:theme.gold }}>
+                — {quote?.author||quote?.a}
+              </span>
+              <span style={{ fontFamily:"'DM Mono',monospace",fontSize:12,color:theme.textMuted,marginLeft:8 }}>
+                {quote?.role||quote?.r}
+              </span>
+            </div>
+            <button onClick={onNextQuote}
+              style={{ color:theme.textMuted,fontSize:17,padding:"4px 10px",borderRadius:10,
+                background:theme.goldDim,border:"none",cursor:"pointer",lineHeight:1 }}>↻</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Progress strip */}
+      <div style={{ background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,
+        padding:"14px 16px",marginBottom:16,display:"flex",gap:16,alignItems:"center" }}>
+        <div style={{ flex:1 }}>
+          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:15,color:theme.text,marginBottom:6 }}>
+            Today's Progress
+          </div>
+          <div style={{ background:theme.surface2,borderRadius:20,height:8,overflow:"hidden" }}>
+            <div style={{ height:"100%",background:theme.gold,borderRadius:20,
+              width:`${todayTotal>0?(todayDone/todayTotal*100):0}%`,transition:"width 0.4s ease",
+              boxShadow:`0 0 8px ${theme.gold}66` }} />
+          </div>
+        </div>
+        <div style={{ textAlign:"right",flexShrink:0 }}>
+          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:22,color:theme.gold }}>
+            {todayDone}<span style={{ fontSize:15,color:theme.textMuted,fontWeight:500 }}>/{todayTotal}</span>
+          </div>
+          <div style={{ fontSize:13,color:theme.textMuted,fontFamily:"'DM Mono',monospace",
+            textTransform:"uppercase",letterSpacing:"0.02em" }}>done</div>
+        </div>
+      </div>
+
+      {/* Today's To-Dos */}
+      <div style={{ background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,marginBottom:16,overflow:"hidden" }}>
+        <div style={{ display:"flex",alignItems:"center",padding:"14px 16px 10px",gap:8 }}>
+          <span style={{ fontSize:20 }}>☀</span>
+          <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:16,color:theme.text }}>Today</span>
+          <span style={{ fontFamily:"'DM Mono',monospace",fontSize:13,color:theme.gold,
+            background:theme.goldDim,padding:"1px 7px",borderRadius:18,marginLeft:2 }}>{todayTasks.length}</span>
+          <div style={{ flex:1 }} />
+          <button onClick={()=>onNav("todos")}
+            style={{ fontSize:14,color:theme.gold,background:"none",border:"none",
+              cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,padding:"2px 4px" }}>
+            All →
+          </button>
+        </div>
+        {todayTasks.length===0 ? (
+          <div style={{ padding:"14px 16px 16px",color:theme.textMuted,fontStyle:"italic",
+            fontFamily:"'Lora',Georgia,serif",fontSize:17 }}>All done for today! 🎉</div>
+        ) : todayTasks.slice(0,3).map(t=>(
+          <div key={t.id} style={{ display:"flex",alignItems:"center",gap:10,
+            padding:"9px 16px",borderTop:`1px solid ${theme.borderSoft}` }}>
+            <div style={{ width:8,height:8,borderRadius:"50%",background:theme.gold,flexShrink:0 }} />
+            <div style={{ flex:1,minWidth:0 }}>
+              <div style={{ fontFamily:"'Lora',Georgia,serif",fontSize:18,fontWeight:600,
+                color:theme.text,lineHeight:1.3 }}>{t.text}</div>
+              {(t.owner||t.deadline) && (
+                <div style={{ display:"flex",gap:8,marginTop:2 }}>
+                  {t.owner    && <span style={{ fontSize:13,color:theme.gold,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:600 }}>◈ {t.owner}</span>}
+                  {t.deadline && <span style={{ fontSize:13,color:theme.textMuted,fontFamily:"'DM Mono',monospace" }}>{t.deadline}</span>}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+        {todayTasks.length>3 && (
+          <div style={{ padding:"8px 16px 12px",borderTop:`1px solid ${theme.borderSoft}` }}>
+            <button onClick={()=>onNav("todos")}
+              style={{ width:"100%",background:theme.goldDim,color:theme.gold,border:`1px solid ${theme.gold}33`,
+                borderRadius:12,padding:"8px",fontSize:15,cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700 }}>
+              + {todayTasks.length-3} more tasks
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* This Week */}
+      {weekTasks.length>0 && (
+        <div style={{ background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,marginBottom:16,overflow:"hidden" }}>
+          <div style={{ display:"flex",alignItems:"center",padding:"14px 16px 10px",gap:8 }}>
+            <span style={{ fontSize:20 }}>◈</span>
+            <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:16,color:theme.text }}>This Week</span>
+            <span style={{ fontFamily:"'DM Mono',monospace",fontSize:13,color:theme.teal,
+              background:theme.tealDim,padding:"1px 7px",borderRadius:18,marginLeft:2 }}>{weekTasks.length}</span>
+            <div style={{ flex:1 }} />
+            <button onClick={()=>onNav("todos")}
+              style={{ fontSize:14,color:theme.gold,background:"none",border:"none",
+                cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,padding:"2px 4px" }}>All →</button>
+          </div>
+          {weekTasks.slice(0,2).map(t=>(
+            <div key={t.id} style={{ display:"flex",alignItems:"center",gap:10,
+              padding:"9px 16px",borderTop:`1px solid ${theme.borderSoft}` }}>
+              <div style={{ width:8,height:8,borderRadius:"50%",background:theme.teal,flexShrink:0 }} />
+              <div style={{ flex:1,fontFamily:"'Lora',Georgia,serif",fontSize:18,fontWeight:600,
+                color:theme.text,lineHeight:1.3 }}>{t.text}</div>
+              {t.deadline && <span style={{ fontSize:13,color:theme.textMuted,fontFamily:"'DM Mono',monospace",flexShrink:0 }}>{t.deadline}</span>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 2-up CTA cards */}
+      <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16 }}>
+        <button onClick={()=>onNav("reflections")}
+          style={{ background:`linear-gradient(140deg,${theme.tealDim},${theme.surface})`,
+            border:`1px solid ${theme.teal}44`,borderRadius:18,padding:"16px 14px",
+            cursor:"pointer",textAlign:"left" }}>
+          <div style={{ fontSize:28,marginBottom:6 }}>🌿</div>
+          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:16,color:theme.text,marginBottom:4 }}>Reflect</div>
+          <div style={{ fontFamily:"'Lora',Georgia,serif",fontSize:15,color:theme.textSoft,lineHeight:1.4,fontStyle:"italic" }}>
+            How are you feeling today?
+          </div>
+        </button>
+        <button onClick={()=>onNav("notes")}
+          style={{ background:`linear-gradient(140deg,${theme.goldDim},${theme.surface})`,
+            border:`1px solid ${theme.gold}44`,borderRadius:18,padding:"16px 14px",
+            cursor:"pointer",textAlign:"left" }}>
+          <div style={{ fontSize:28,marginBottom:6 }}>✎</div>
+          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:16,color:theme.text,marginBottom:4 }}>New Note</div>
+          <div style={{ fontFamily:"'Lora',Georgia,serif",fontSize:15,color:theme.textSoft,lineHeight:1.4,fontStyle:"italic" }}>
+            Start a meeting note
+          </div>
+        </button>
+      </div>
+
+      {/* Top 5 Recent Notes */}
+      <div style={{ marginBottom:8 }}>
+        <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:12 }}>
+          <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:16,color:theme.text }}>Recent Notes</span>
+          <div style={{ flex:1,height:1,background:theme.border }} />
+          <button onClick={()=>onNav("notes")}
+            style={{ fontSize:14,color:theme.gold,background:"none",border:"none",
+              cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700 }}>All →</button>
+        </div>
+        {topNotes.length===0 && (
+          <div style={{ color:theme.textMuted,fontStyle:"italic",fontFamily:"'Lora',Georgia,serif",fontSize:16 }}>
+            No notes yet — tap New Note to start.
+          </div>
+        )}
+        {topNotes.map(n=>(
+          <div key={n.id} onClick={()=>onNoteClick(n)} className="ncard"
+            style={{ background:theme.cardBg,border:`1px solid ${theme.border}`,
+              borderRadius:16,padding:"12px 14px",marginBottom:8,cursor:"pointer" }}>
+            <div style={{ display:"flex",alignItems:"flex-start",gap:10 }}>
+              <div style={{ flex:1,minWidth:0 }}>
+                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:17,
+                  color:theme.text,marginBottom:3,overflow:"hidden",whiteSpace:"nowrap",textOverflow:"ellipsis" }}>
+                  {n.subject||"Untitled"}
+                </div>
+                <div style={{ display:"flex",gap:8,alignItems:"center",flexWrap:"wrap" }}>
+                  <span style={{ fontFamily:"'DM Mono',monospace",fontSize:13,color:theme.textMuted }}>
+                    {n.note_date||n.created_at?.split("T")[0]}
+                  </span>
+                  {n.ai_summary && <span style={{ fontSize:13,color:theme.gold,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:600 }}>✦ AI</span>}
+                </div>
+              </div>
+              <span style={{ color:theme.gold,fontSize:18,opacity:0.5 }}>›</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1301,13 +1515,6 @@ function NoteFlowApp() {
   const [calDate,       setCalDate]       = useState(isoToday());
   const [notifEnabled,  setNotifEnabled]  = useState(false);
   const [notifTime,     setNotifTime]     = useState({hour:8,minute:0});
-  const [errToast,      setErrToast]      = useState(null);
-
-  const dbErr = (err) => {
-    console.error("DB error:", err);
-    setErrToast(err?.message || "Something went wrong. Check your Supabase connection.");
-    setTimeout(() => setErrToast(null), 5000);
-  };
 
   // ── Load data ─────────────────────────────────────────────────
   useEffect(() => {
@@ -1370,8 +1577,7 @@ function NoteFlowApp() {
     const {data,error} = await supabase.from("folders")
       .insert({user_id:user.id,name:newFolderName.trim(),color:FOLDER_COLORS[folders.length%FOLDER_COLORS.length]})
       .select().single();
-    if (error) { dbErr(error); return; }
-    setFolders(f=>[...f,data]); setNewFolderName(""); setShowNewFolder(false);
+    if (!error) { setFolders(f=>[...f,data]); setNewFolderName(""); setShowNewFolder(false); }
   };
   const deleteFolder = async id => {
     await supabase.from("folders").delete().eq("id",id);
@@ -1385,8 +1591,7 @@ function NoteFlowApp() {
       user_id:user.id, folder_id:activeFolder, subject:"", note:"• ",
       note_date:calDate, participants:[], ai_summary:""
     }).select().single();
-    if (error) { dbErr(error); return; }
-    setNotes(n=>[data,...n]); setEditingNote(data); setView("note-edit");
+    if (!error) { setNotes(n=>[data,...n]); setEditingNote(data); setView("note-edit"); }
   };
 
   const updateNote = async (updated) => {
@@ -1417,8 +1622,7 @@ function NoteFlowApp() {
       folder_id:folderId||activeFolder, done:false,
       owner:owner||null, deadline:deadline||null,
     }).select().single();
-    if (error) { dbErr(error); return null; }
-    setTasks(t=>[...t,data]);
+    if (!error) setTasks(t=>[...t,data]);
     return data;
   };
 
@@ -1448,12 +1652,10 @@ function NoteFlowApp() {
   const saveReflection = async (data) => {
     const existing = reflections.find(r=>r.date===isoToday());
     if (existing) {
-      const {data:upd, error} = await supabase.from("reflections").update(data).eq("id",existing.id).select().single();
-      if (error) { dbErr(error); return; }
+      const {data:upd} = await supabase.from("reflections").update(data).eq("id",existing.id).select().single();
       setReflections(r=>r.map(x=>x.id===existing.id?{...x,...upd}:x));
     } else {
-      const {data:created, error} = await supabase.from("reflections").insert({user_id:user.id,date:isoToday(),...data}).select().single();
-      if (error) { dbErr(error); return; }
+      const {data:created} = await supabase.from("reflections").insert({user_id:user.id,date:isoToday(),...data}).select().single();
       setReflections(r=>[created,...r]);
     }
   };
@@ -1474,34 +1676,26 @@ function NoteFlowApp() {
 
   // ── Nav items ─────────────────────────────────────────────────
   const mobileNav = [
-    {key:"todos",       ic:"✦",  lbl:"To-Dos"  },
-    {key:"notes",       ic:"✎",  lbl:"Meeting" },
-    {key:"calendar",    ic:"◫",  lbl:"Calendar"},
-    {key:"reflections", ic:"◯",  lbl:"Reflect" },
-    {key:"more",        ic:"⋯",  lbl:"More"    },
+    {key:"home",        ic:"🏠",  lbl:"Home"    },
+    {key:"todos",       ic:"✅",  lbl:"To-Dos"  },
+    {key:"notes",       ic:"📝",  lbl:"Meeting" },
+    {key:"calendar",    ic:"📅",  lbl:"Calendar"},
+    {key:"reflections", ic:"🌿",  lbl:"Reflect" },
+    {key:"more",        ic:"☰",   lbl:"More"    },
   ];
   const desktopNav = [
-    {key:"todos",       icon:"✦",  label:"To-Dos"      },
-    {key:"notes",       icon:"✎",  label:"Meeting Notes"},
-    {key:"calendar",    icon:"◫",  label:"Calendar"    },
-    {key:"reflections", icon:"◯",  label:"Reflections" },
-    {key:"search",      icon:"⊕",  label:"Search"      },
+    {key:"home",        icon:"🏠",  label:"Home"         },
+    {key:"todos",       icon:"✅",  label:"To-Dos"       },
+    {key:"notes",       icon:"📝",  label:"Meeting Notes"},
+    {key:"calendar",    icon:"📅",  label:"Calendar"     },
+    {key:"reflections", icon:"🌿",  label:"Reflections"  },
+    {key:"search",      icon:"⊕",  label:"Search"       },
   ];
 
   return (
     <div style={{background:theme.bg,color:theme.text,height:"100dvh",display:"flex",
-      flexDirection:"column",overflow:"hidden",fontFamily:"'Cormorant Garamond',Georgia,serif",fontSize}}>
+      flexDirection:"column",overflow:"hidden",fontFamily:"'Plus Jakarta Sans',sans-serif",fontSize}}>
       <style>{globalCSS(theme)}</style>
-
-      {/* Error Toast */}
-      {errToast && (
-        <div style={{position:"fixed",bottom:80,left:"50%",transform:"translateX(-50%)",
-          background:"#f76a8a",color:"#fff",padding:"10px 20px",borderRadius:10,
-          fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:13,zIndex:9999,
-          boxShadow:"0 4px 20px rgba(0,0,0,0.4)",maxWidth:"90vw",textAlign:"center"}}>
-          ⚠ {errToast}
-        </div>
-      )}
 
       {/* Email Modal */}
       {emailNote && (
@@ -1520,44 +1714,44 @@ function NoteFlowApp() {
         padding:isMobile?"9px 14px":"9px 20px",display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
         {!isMobile&&(
           <button className="btn" onClick={()=>setSidebarOpen(o=>!o)}
-            style={{fontSize:18,color:theme.gold,lineHeight:1}}>☰</button>
+            style={{fontSize:26,color:theme.gold,lineHeight:1}}>☰</button>
         )}
         <div style={{display:"flex",alignItems:"center",gap:6}}>
-          <span style={{color:theme.gold,fontSize:16,lineHeight:1}}>✦</span>
-          <span style={{fontFamily:"'Cormorant Garamond',Georgia,serif",fontWeight:700,fontSize:isMobile?16:19,
-            color:theme.text,letterSpacing:"-0.3px"}}>NoteFlow</span>
+          <span style={{color:theme.gold,fontSize:26,lineHeight:1}}>✦</span>
+          <span style={{fontFamily:"'Lora',Georgia,serif",fontWeight:700,fontSize:isMobile?16:19,
+            color:theme.text,letterSpacing:"-0.2px"}}>NoteFlow</span>
         </div>
         <div style={{flex:1}}/>
         {!isMobile&&(
           <div style={{position:"relative",flex:1,maxWidth:300}}>
-            <span style={{position:"absolute",left:9,top:"50%",transform:"translateY(-50%)",opacity:0.4,fontSize:12}}>⊕</span>
+            <span style={{position:"absolute",left:9,top:"50%",transform:"translateY(-50%)",opacity:0.4,fontSize:26}}>⊕</span>
             <input placeholder="Semantic search…" value={searchQuery}
               onFocus={()=>setView("search")}
               onChange={e=>{setSearchQuery(e.target.value);setView("search");}}
-              style={{paddingLeft:28,height:34,fontSize:12,background:theme.surface2,
-                border:`1px solid ${theme.border}`,color:theme.text,fontFamily:"'Jost',sans-serif"}}/>
+              style={{paddingLeft:28,height:34,fontSize:26,background:theme.surface2,
+                border:`1px solid ${theme.border}`,color:theme.text,fontFamily:"'Plus Jakarta Sans',sans-serif"}}/>
           </div>
         )}
         <button className="btn" onClick={toggleTheme}
-          style={{fontSize:17,padding:"3px 7px",borderRadius:8,background:theme.goldDim,lineHeight:1}}>
+          style={{fontSize:19,padding:"3px 7px",borderRadius:16,background:theme.goldDim,lineHeight:1}}>
           {themeMode==="dark"?"☀":"🌙"}
         </button>
         {!isMobile&&(
           <>
             <button className="btn" onClick={()=>setFontSize(f=>Math.max(12,f-1))}
-              style={{opacity:0.5,fontSize:11,color:theme.textSoft,fontFamily:"'Jost',sans-serif"}}>A−</button>
+              style={{opacity:0.5,fontSize:19,color:theme.textSoft,fontFamily:"'Plus Jakarta Sans',sans-serif"}}>A−</button>
             <button className="btn" onClick={()=>setFontSize(f=>Math.min(22,f+1))}
-              style={{opacity:0.5,fontSize:14,color:theme.textSoft,fontFamily:"'Jost',sans-serif"}}>A+</button>
+              style={{opacity:0.5,fontSize:26,color:theme.textSoft,fontFamily:"'Plus Jakarta Sans',sans-serif"}}>A+</button>
           </>
         )}
         <div style={{width:30,height:30,borderRadius:"50%",background:theme.goldDim,
           border:`1px solid ${theme.gold}66`,display:"flex",alignItems:"center",justifyContent:"center",
-          fontSize:13,color:theme.gold,fontFamily:"'Jost',sans-serif",fontWeight:800}}>
+          fontSize:19,color:theme.gold,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700}}>
           {user?.email?.[0]?.toUpperCase()}
         </div>
         {!isMobile&&(
           <button className="btn" onClick={()=>supabase.auth.signOut()}
-            style={{fontSize:11,color:theme.textMuted,fontFamily:"'Jost',sans-serif"}}>Sign out</button>
+            style={{fontSize:19,color:theme.textMuted,fontFamily:"'Plus Jakarta Sans',sans-serif"}}>Sign out</button>
         )}
       </div>
 
@@ -1577,8 +1771,8 @@ function NoteFlowApp() {
                   active={view===item.key||(item.key==="notes"&&view==="note-edit")}
                   onClick={()=>{if(item.key==="notes")setEditingNote(null);setView(item.key);}}/>
               ))}
-              <div style={{margin:"16px 12px 5px",fontSize:9,letterSpacing:"0.15em",color:theme.textMuted,
-                textTransform:"uppercase",fontFamily:"'JetBrains Mono',monospace"}}>Folders</div>
+              <div style={{margin:"16px 12px 5px",fontSize:19,letterSpacing:"0.15em",color:theme.textMuted,
+                textTransform:"uppercase",fontFamily:"'DM Mono',monospace"}}>Folders</div>
               {folders.map(f=>(
                 <NavItem key={f.id} label={f.name} dot={true} dotColor={f.color} theme={theme}
                   active={activeFolder===f.id}
@@ -1588,14 +1782,14 @@ function NoteFlowApp() {
               {showNewFolder?(
                 <div style={{padding:"4px 12px",display:"flex",gap:4}}>
                   <input value={newFolderName} onChange={e=>setNewFolderName(e.target.value)} placeholder="Folder name"
-                    style={{fontSize:12,height:30,background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,fontFamily:"'Jost',sans-serif"}}
+                    style={{fontSize:26,height:30,background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,fontFamily:"'Plus Jakarta Sans',sans-serif"}}
                     onKeyDown={e=>{if(e.key==="Enter")addFolder();if(e.key==="Escape")setShowNewFolder(false);}} autoFocus/>
-                  <button className="btn" onClick={addFolder} style={{color:theme.gold,fontSize:18,lineHeight:1}}>+</button>
+                  <button className="btn" onClick={addFolder} style={{color:theme.gold,fontSize:26,lineHeight:1}}>+</button>
                 </div>
               ):(
                 <button className="btn" onClick={()=>setShowNewFolder(true)}
-                  style={{margin:"4px 12px",color:theme.textMuted,fontSize:12,textAlign:"left",
-                    fontFamily:"'Jost',sans-serif",fontWeight:500}}>+ New folder</button>
+                  style={{margin:"4px 12px",color:theme.textMuted,fontSize:26,textAlign:"left",
+                    fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:500}}>+ New folder</button>
               )}
             </div>
           )}
@@ -1603,40 +1797,55 @@ function NoteFlowApp() {
           {/* Main Content */}
           <div style={{flex:1,overflow:"auto",padding:isMobile?"14px 14px 8px":24}}>
 
+            {/* ░░ HOME DASHBOARD ░░ */}
+            {view==="home"&&(
+              <HomeDashboard
+                theme={theme}
+                notes={visibleNotes}
+                tasks={tasks}
+                allTasks={allTasks}
+                quote={QUOTES[quoteIdx]}
+                qFade={quoteFade}
+                onNextQuote={nextQuote}
+                onNav={key=>setView(key)}
+                onNoteClick={n=>{setEditingNote(n);setView("note-edit");}}
+              />
+            )}
+
             {/* ░░ TO-DOS ░░ */}
             {view==="todos"&&(
               <div className="fade-in">
                 <div style={{display:"flex",alignItems:"center",marginBottom:18,gap:10}}>
-                  <h1 style={{fontFamily:"'Jost',sans-serif",fontSize:isMobile?19:22,fontWeight:800,
-                    color:theme.text,letterSpacing:"-0.3px"}}>To-Dos</h1>
+                  <h1 style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontSize:isMobile?19:22,fontWeight:700,
+                    color:theme.text,letterSpacing:"-0.2px"}}>To-Dos</h1>
                   <div style={{flex:1}}/>
                   <button className="btn" onClick={()=>setShowAddTask(o=>!o)}
                     style={{background:theme.gold,color:theme.bg,padding:"8px 18px",borderRadius:9,
-                      fontSize:12,border:"none",fontFamily:"'Jost',sans-serif",fontWeight:800,letterSpacing:"0.06em"}}>+ ADD</button>
+                      fontSize:26,border:"none",fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.02em"}}>+ ADD</button>
                 </div>
 
                 {showAddTask&&(
                   <div className="slide-up" style={{background:theme.surface,border:`1px solid ${theme.border}`,
-                    borderRadius:12,padding:16,marginBottom:14}}>
+                    borderRadius:16,padding:16,marginBottom:14}}>
                     <input value={newTaskTxt} onChange={e=>setNewTaskTxt(e.target.value)} placeholder="Task description…"
                       onKeyDown={e=>e.key==="Enter"&&addStandaloneTask()} autoFocus
-                      style={{width:"100%",fontSize:15,background:theme.surface2,border:`1px solid ${theme.border}`,
-                        color:theme.text,borderRadius:8,padding:"9px 12px",fontFamily:"'Cormorant Garamond',serif",
+                      style={{width:"100%",fontSize:19,background:theme.surface2,border:`1px solid ${theme.border}`,
+                        color:theme.text,borderRadius:16,padding:"9px 12px",fontFamily:"'Lora',Georgia,serif",
                         outline:"none",marginBottom:8}}/>
                     <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
                       <select value={newTaskSeg} onChange={e=>setNewTaskSeg(e.target.value)}
-                        style={{flex:"1 1 110px",fontSize:12,background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,borderRadius:8,padding:"7px 9px"}}>
+                        style={{flex:"1 1 110px",fontSize:26,background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,borderRadius:16,padding:"7px 9px"}}>
                         {SEGMENTS.map(s=><option key={s.key} value={s.key}>{s.label}</option>)}
                       </select>
                       <input value={newTaskOwner} onChange={e=>setNewTaskOwner(e.target.value)} placeholder="Owner"
-                        style={{width:82,fontSize:12,background:theme.surface2,border:`1px solid ${theme.border}`,
-                          color:theme.text,borderRadius:8,padding:"7px 9px",fontFamily:"'Jost',sans-serif",outline:"none"}}/>
+                        style={{width:82,fontSize:26,background:theme.surface2,border:`1px solid ${theme.border}`,
+                          color:theme.text,borderRadius:16,padding:"7px 9px",fontFamily:"'Plus Jakarta Sans',sans-serif",outline:"none"}}/>
                       <input type="date" value={newTaskDl} onChange={e=>setNewTaskDl(e.target.value)}
-                        style={{fontSize:11,background:theme.surface2,border:`1px solid ${theme.border}`,
-                          color:theme.text,borderRadius:8,padding:"7px 8px",fontFamily:"'JetBrains Mono',monospace",outline:"none"}}/>
+                        style={{fontSize:19,background:theme.surface2,border:`1px solid ${theme.border}`,
+                          color:theme.text,borderRadius:16,padding:"7px 8px",fontFamily:"'DM Mono',monospace",outline:"none"}}/>
                       <button className="btn" onClick={addStandaloneTask}
                         style={{background:theme.gold,color:theme.bg,border:"none",padding:"7px 16px",
-                          borderRadius:8,fontSize:12,fontFamily:"'Jost',sans-serif",fontWeight:800,letterSpacing:"0.05em"}}>ADD</button>
+                          borderRadius:16,fontSize:26,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.01em"}}>ADD</button>
                     </div>
                   </div>
                 )}
@@ -1645,10 +1854,10 @@ function NoteFlowApp() {
                   {SEGMENTS.map(s=>(
                     <button key={s.key} className={`btn seg-btn${activeSeg===s.key?" active":""}`}
                       onClick={()=>setActiveSeg(s.key)}
-                      style={{padding:"6px 14px",borderRadius:20,fontSize:12,background:theme.surface,
+                      style={{padding:"6px 14px",borderRadius:20,fontSize:26,background:theme.surface,
                         border:`1px solid ${theme.border}`,color:theme.textSoft,whiteSpace:"nowrap",flexShrink:0,
-                        fontFamily:"'Jost',sans-serif",fontWeight:600,letterSpacing:"0.03em"}}>
-                      {s.icon} {s.label} <span style={{opacity:0.45,fontSize:10,marginLeft:4}}>{allTasks.filter(t=>t.segment===s.key&&!t.done).length}</span>
+                        fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:600,letterSpacing:"0.03em"}}>
+                      {s.icon} {s.label} <span style={{opacity:0.45,fontSize:26,marginLeft:4}}>{allTasks.filter(t=>t.segment===s.key&&!t.done).length}</span>
                     </button>
                   ))}
                 </div>
@@ -1691,14 +1900,14 @@ function NoteFlowApp() {
             {view==="notes"&&(
               <div className="fade-in">
                 <div style={{display:"flex",alignItems:"center",marginBottom:18,gap:10}}>
-                  <h1 style={{fontFamily:"'Jost',sans-serif",fontSize:isMobile?19:22,fontWeight:800,
-                    color:theme.text,letterSpacing:"-0.3px"}}>
+                  <h1 style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontSize:isMobile?19:22,fontWeight:700,
+                    color:theme.text,letterSpacing:"-0.2px"}}>
                     {activeFolder?folders.find(f=>f.id===activeFolder)?.name||"Notes":"Meeting Notes"}
                   </h1>
                   <div style={{flex:1}}/>
                   <button className="btn" onClick={newNote}
                     style={{background:theme.gold,color:theme.bg,padding:"8px 18px",borderRadius:9,
-                      fontSize:12,border:"none",fontFamily:"'Jost',sans-serif",fontWeight:800,letterSpacing:"0.06em"}}>+ NEW</button>
+                      fontSize:26,border:"none",fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.02em"}}>+ NEW</button>
                 </div>
                 {visibleNotes.length===0
                   ? <EmptyState theme={theme} text="No notes yet — create one ✦"/>
@@ -1711,29 +1920,29 @@ function NoteFlowApp() {
                         <div key={n.id} className="note-card"
                           style={{background:theme.card,border:`1px solid ${theme.border}`,borderRadius:14,padding:16,cursor:"pointer"}}
                           onClick={()=>{setEditingNote(n);setView("note-edit");}}>
-                          {fol&&<span style={{display:"inline-block",padding:"1px 9px",borderRadius:20,fontSize:9,
-                            fontFamily:"'Jost',sans-serif",fontWeight:800,letterSpacing:"0.06em",textTransform:"uppercase",
+                          {fol&&<span style={{display:"inline-block",padding:"1px 9px",borderRadius:20,fontSize:19,
+                            fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.02em",textTransform:"uppercase",
                             background:fol.color+"22",color:fol.color,marginBottom:5}}>{fol.name}</span>}
-                          <div style={{fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:15,
+                          <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,
                             color:theme.text,marginBottom:4,letterSpacing:"-0.2px"}}>{n.subject||"Untitled"}</div>
-                          <div style={{fontSize:13,color:theme.textSoft,fontFamily:"'Cormorant Garamond',serif",
+                          <div style={{fontSize:19,color:theme.textSoft,fontFamily:"'Lora',Georgia,serif",
                             lineHeight:1.55,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>
                             {n.note?.replace(/^[\s•\-]+/gm,"").trim().slice(0,150)||"…"}
                           </div>
                           <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"center",marginTop:8}}>
-                            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,color:theme.textMuted}}>
+                            <span style={{fontFamily:"'DM Mono',monospace",fontSize:26,color:theme.textMuted}}>
                               {n.note_date||n.created_at?.split("T")[0]||""}
                             </span>
-                            {openAPs>0&&<span style={{fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:10,color:theme.gold}}>
+                            {openAPs>0&&<span style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:26,color:theme.gold}}>
                               ⚡ {openAPs} action{openAPs>1?"s":""}
                             </span>}
-                            {n.ai_summary&&<span style={{fontSize:10,color:theme.gold,fontFamily:"'Jost',sans-serif",fontWeight:600}}>✦ summary</span>}
-                            {n.participants?.length>0&&<span style={{fontSize:10,color:theme.textMuted,fontFamily:"'Jost',sans-serif"}}>👥 {n.participants.length}</span>}
+                            {n.ai_summary&&<span style={{fontSize:26,color:theme.gold,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:600}}>✦ summary</span>}
+                            {n.participants?.length>0&&<span style={{fontSize:26,color:theme.textMuted,fontFamily:"'Plus Jakarta Sans',sans-serif"}}>👥 {n.participants.length}</span>}
                           </div>
                           {n.ai_summary&&(
-                            <div style={{marginTop:10,padding:"8px 12px",background:theme.goldDim,borderRadius:8,
-                              borderLeft:`3px solid ${theme.gold}`,fontSize:13,color:theme.textSoft,
-                              fontStyle:"italic",fontFamily:"'Cormorant Garamond',serif",lineHeight:1.55}}>
+                            <div style={{marginTop:10,padding:"8px 12px",background:theme.goldDim,borderRadius:16,
+                              borderLeft:`3px solid ${theme.gold}`,fontSize:19,color:theme.textSoft,
+                              fontStyle:"italic",fontFamily:"'Lora',Georgia,serif",lineHeight:1.55}}>
                               {n.ai_summary}
                             </div>
                           )}
@@ -1769,12 +1978,12 @@ function NoteFlowApp() {
             {/* ░░ SEARCH ░░ */}
             {view==="search"&&(
               <div className="fade-in">
-                <h1 style={{fontFamily:"'Jost',sans-serif",fontSize:isMobile?19:22,fontWeight:800,
-                  color:theme.text,letterSpacing:"-0.3px",marginBottom:16}}>⊕ Search</h1>
+                <h1 style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontSize:isMobile?19:22,fontWeight:700,
+                  color:theme.text,letterSpacing:"-0.2px",marginBottom:16}}>⊕ Search</h1>
                 <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)}
                   placeholder="Search notes and tasks by meaning…" autoFocus
                   style={{marginBottom:14,width:"100%",background:theme.surface2,
-                    border:`1px solid ${theme.border}`,color:theme.text,fontFamily:"'Cormorant Garamond',serif"}}/>
+                    border:`1px solid ${theme.border}`,color:theme.text,fontFamily:"'Lora',Georgia,serif"}}/>
                 {!searchQuery&&<EmptyState theme={theme} text="Start typing to search by meaning"/>}
                 {searchQuery&&searchResults.length===0&&<EmptyState theme={theme} text="No results found."/>}
                 {searchResults.map(r=>{
@@ -1782,21 +1991,21 @@ function NoteFlowApp() {
                     const n=notes.find(n=>n.id===r.id); if(!n) return null;
                     return (
                       <div key={r.id} onClick={()=>{setEditingNote(n);setView("note-edit");}}
-                        style={{background:theme.card,border:`1px solid ${theme.border}`,borderRadius:10,padding:14,marginBottom:10,cursor:"pointer"}}>
-                        <span style={{display:"inline-block",padding:"1px 9px",borderRadius:20,fontSize:9,
-                          fontFamily:"'Jost',sans-serif",fontWeight:800,background:theme.goldDim,color:theme.gold,marginBottom:5}}>Note</span>
-                        <div style={{fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:14,color:theme.text}}>{n.subject||"Untitled"}</div>
-                        <div style={{fontSize:13,color:theme.textSoft,fontFamily:"'Cormorant Garamond',serif",marginTop:3}}>{n.note?.slice(0,120)}…</div>
+                        style={{background:theme.card,border:`1px solid ${theme.border}`,borderRadius:14,padding:14,marginBottom:10,cursor:"pointer"}}>
+                        <span style={{display:"inline-block",padding:"1px 9px",borderRadius:20,fontSize:19,
+                          fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,background:theme.goldDim,color:theme.gold,marginBottom:5}}>Note</span>
+                        <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:26,color:theme.text}}>{n.subject||"Untitled"}</div>
+                        <div style={{fontSize:19,color:theme.textSoft,fontFamily:"'Lora',Georgia,serif",marginTop:3}}>{n.note?.slice(0,120)}…</div>
                       </div>
                     );
                   } else {
                     const t=allTasks.find(t=>t.id===r.id); if(!t) return null;
                     return (
-                      <div key={r.id} style={{background:theme.card,border:`1px solid ${theme.border}`,borderRadius:10,padding:14,marginBottom:10,display:"flex",alignItems:"center",gap:10}}>
-                        <span style={{display:"inline-block",padding:"1px 9px",borderRadius:20,fontSize:9,
-                          fontFamily:"'Jost',sans-serif",fontWeight:800,background:theme.dangerDim,color:theme.danger}}>Task</span>
+                      <div key={r.id} style={{background:theme.card,border:`1px solid ${theme.border}`,borderRadius:14,padding:14,marginBottom:10,display:"flex",alignItems:"center",gap:10}}>
+                        <span style={{display:"inline-block",padding:"1px 9px",borderRadius:20,fontSize:19,
+                          fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,background:theme.dangerDim,color:theme.danger}}>Task</span>
                         <span style={{color:t.done?theme.textMuted:theme.text,textDecoration:t.done?"line-through":"none",
-                          flex:1,fontFamily:"'Cormorant Garamond',serif"}}>{t.text}</span>
+                          flex:1,fontFamily:"'Lora',Georgia,serif"}}>{t.text}</span>
                       </div>
                     );
                   }
@@ -1807,11 +2016,11 @@ function NoteFlowApp() {
             {/* ░░ MORE (mobile) ░░ */}
             {view==="more"&&isMobile&&(
               <div className="fade-in">
-                <h1 style={{fontFamily:"'Jost',sans-serif",fontSize:19,fontWeight:800,
-                  color:theme.text,letterSpacing:"-0.3px",marginBottom:18}}>More</h1>
+                <h1 style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontSize:19,fontWeight:700,
+                  color:theme.text,letterSpacing:"-0.2px",marginBottom:18}}>More</h1>
 
                 {/* Search */}
-                <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:12,padding:14,marginBottom:12}}>
+                <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:14,marginBottom:12}}>
                   <div style={lbl(theme)}>Search</div>
                   <input value={searchQuery} onChange={e=>{setSearchQuery(e.target.value);runSearch(e.target.value);}}
                     placeholder="Search notes and tasks…"
@@ -1820,25 +2029,25 @@ function NoteFlowApp() {
                     if(r.type==="note"){const n=notes.find(n=>n.id===r.id);if(!n)return null;
                       return <div key={r.id} onClick={()=>{setEditingNote(n);setView("note-edit");}}
                         style={{padding:"8px 0",borderBottom:`1px solid ${theme.borderSoft}`,cursor:"pointer"}}>
-                        <div style={{fontFamily:"'Jost',sans-serif",fontWeight:600,fontSize:13,color:theme.text}}>{n.subject||"Untitled"}</div>
+                        <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:600,fontSize:19,color:theme.text}}>{n.subject||"Untitled"}</div>
                       </div>;
                     }
                     const t=allTasks.find(t=>t.id===r.id);if(!t)return null;
                     return <div key={r.id} style={{padding:"8px 0",borderBottom:`1px solid ${theme.borderSoft}`}}>
-                      <span style={{fontSize:13,color:theme.textSoft,fontFamily:"'Cormorant Garamond',serif"}}>{t.text}</span>
+                      <span style={{fontSize:19,color:theme.textSoft,fontFamily:"'Lora',Georgia,serif"}}>{t.text}</span>
                     </div>;
                   })}
                 </div>
 
                 {/* Folders */}
-                <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:12,padding:14,marginBottom:12}}>
+                <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:14,marginBottom:12}}>
                   <div style={lbl(theme)}>Folders</div>
                   {folders.map(f=>(
                     <div key={f.id} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:`1px solid ${theme.borderSoft}`}}>
                       <span style={{width:9,height:9,borderRadius:"50%",background:f.color,flexShrink:0}}/>
-                      <span style={{flex:1,fontFamily:"'Jost',sans-serif",fontWeight:700,fontSize:13,color:theme.text}}
+                      <span style={{flex:1,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,color:theme.text}}
                         onClick={()=>{setActiveFolder(f.id);setView("notes");}}>{f.name}</span>
-                      <span style={{fontSize:10,color:theme.textMuted,fontFamily:"'JetBrains Mono',monospace"}}>
+                      <span style={{fontSize:26,color:theme.textMuted,fontFamily:"'DM Mono',monospace"}}>
                         {notes.filter(n=>n.folder_id===f.id).length} notes
                       </span>
                     </div>
@@ -1846,70 +2055,70 @@ function NoteFlowApp() {
                   {showNewFolder?(
                     <div style={{display:"flex",gap:6,marginTop:8}}>
                       <input value={newFolderName} onChange={e=>setNewFolderName(e.target.value)} placeholder="Folder name"
-                        style={{flex:1,fontSize:13,background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text}}
+                        style={{flex:1,fontSize:19,background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text}}
                         onKeyDown={e=>{if(e.key==="Enter")addFolder();}} autoFocus/>
                       <button className="btn" onClick={addFolder}
-                        style={{background:theme.gold,color:theme.bg,padding:"7px 14px",borderRadius:8,fontSize:12,border:"none",fontFamily:"'Jost',sans-serif",fontWeight:800}}>Add</button>
+                        style={{background:theme.gold,color:theme.bg,padding:"7px 14px",borderRadius:16,fontSize:26,border:"none",fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700}}>Add</button>
                     </div>
                   ):(
                     <button className="btn" onClick={()=>setShowNewFolder(true)}
-                      style={{marginTop:8,color:theme.gold,fontSize:13,fontFamily:"'Jost',sans-serif",fontWeight:600}}>+ New folder</button>
+                      style={{marginTop:8,color:theme.gold,fontSize:19,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:600}}>+ New folder</button>
                   )}
                 </div>
 
                 {/* Notifications */}
-                <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:12,padding:14,marginBottom:12}}>
+                <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:14,marginBottom:12}}>
                   <div style={lbl(theme)}>🔔 Notifications</div>
                   {notifEnabled?(
                     <div>
-                      <div style={{color:theme.green,fontSize:13,fontFamily:"'Jost',sans-serif",fontWeight:600,marginBottom:8}}>✓ Task reminders enabled</div>
+                      <div style={{color:theme.green,fontSize:19,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:600,marginBottom:8}}>✓ Task reminders enabled</div>
                       <div style={{display:"flex",alignItems:"center",gap:10}}>
-                        <span style={{color:theme.textSoft,fontSize:13,fontFamily:"'Jost',sans-serif"}}>Remind at</span>
+                        <span style={{color:theme.textSoft,fontSize:19,fontFamily:"'Plus Jakarta Sans',sans-serif"}}>Remind at</span>
                         <input type="time" defaultValue={`${String(notifTime.hour).padStart(2,"0")}:${String(notifTime.minute).padStart(2,"0")}`}
                           onChange={e=>{const[h,m]=e.target.value.split(":");setNotifTime({hour:Number(h),minute:Number(m)});}}
-                          style={{background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,padding:"6px 10px",borderRadius:8,fontSize:13}}/>
+                          style={{background:theme.surface2,border:`1px solid ${theme.border}`,color:theme.text,padding:"6px 10px",borderRadius:16,fontSize:19}}/>
                       </div>
                     </div>
                   ):(
                     <button className="btn" onClick={enableNotif}
                       style={{background:theme.gold,color:theme.bg,padding:"11px 0",borderRadius:9,
-                        fontSize:12,width:"100%",border:"none",fontFamily:"'Jost',sans-serif",fontWeight:800,letterSpacing:"0.06em"}}>
+                        fontSize:26,width:"100%",border:"none",fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.02em"}}>
                       ENABLE TASK REMINDERS
                     </button>
                   )}
                 </div>
 
                 {/* Appearance */}
-                <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:12,padding:14,marginBottom:12}}>
+                <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:14,marginBottom:12}}>
                   <div style={lbl(theme)}>🎨 Appearance</div>
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
-                    <span style={{color:theme.text,fontSize:13,fontFamily:"'Jost',sans-serif"}}>Theme</span>
+                    <span style={{color:theme.text,fontSize:19,fontFamily:"'Plus Jakarta Sans',sans-serif"}}>Theme</span>
                     <button className="btn" onClick={toggleTheme}
-                      style={{background:theme.goldDim,color:theme.gold,padding:"8px 18px",borderRadius:8,
-                        fontSize:12,border:`1px solid ${theme.gold}44`,fontFamily:"'Jost',sans-serif",fontWeight:800,letterSpacing:"0.05em"}}>
+                      style={{background:theme.goldDim,color:theme.gold,padding:"8px 18px",borderRadius:16,
+                        fontSize:26,border:`1px solid ${theme.gold}44`,fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.01em"}}>
                       {themeMode==="dark"?"☀ LIGHT":"🌙 DARK"}
                     </button>
                   </div>
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                    <span style={{color:theme.text,fontSize:13,fontFamily:"'Jost',sans-serif"}}>Font size</span>
+                    <span style={{color:theme.text,fontSize:19,fontFamily:"'Plus Jakarta Sans',sans-serif"}}>Font size</span>
                     <div style={{display:"flex",gap:6,alignItems:"center"}}>
                       <button className="btn" onClick={()=>setFontSize(f=>Math.max(12,f-1))}
-                        style={{background:theme.surface2,color:theme.text,width:32,height:32,borderRadius:6,fontSize:13,fontFamily:"'Jost',sans-serif"}}>A−</button>
-                      <span style={{color:theme.gold,fontFamily:"'JetBrains Mono',monospace",fontSize:12,minWidth:28,textAlign:"center"}}>{fontSize}px</span>
+                        style={{background:theme.surface2,color:theme.text,width:32,height:32,borderRadius:14,fontSize:19,fontFamily:"'Plus Jakarta Sans',sans-serif"}}>A−</button>
+                      <span style={{color:theme.gold,fontFamily:"'DM Mono',monospace",fontSize:26,minWidth:28,textAlign:"center"}}>{fontSize}px</span>
                       <button className="btn" onClick={()=>setFontSize(f=>Math.min(22,f+1))}
-                        style={{background:theme.surface2,color:theme.text,width:32,height:32,borderRadius:6,fontSize:14,fontFamily:"'Jost',sans-serif"}}>A+</button>
+                        style={{background:theme.surface2,color:theme.text,width:32,height:32,borderRadius:14,fontSize:26,fontFamily:"'Plus Jakarta Sans',sans-serif"}}>A+</button>
                     </div>
                   </div>
                 </div>
 
                 {/* Account */}
-                <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:12,padding:14}}>
+                <div style={{background:theme.surface,border:`1px solid ${theme.border}`,borderRadius:16,padding:14}}>
                   <div style={lbl(theme)}>👤 Account</div>
-                  <div style={{color:theme.textSoft,fontSize:12,fontFamily:"'Jost',sans-serif",marginBottom:14,wordBreak:"break-all"}}>{user?.email}</div>
+                  <div style={{color:theme.textSoft,fontSize:26,fontFamily:"'Plus Jakarta Sans',sans-serif",marginBottom:14,wordBreak:"break-all"}}>{user?.email}</div>
                   <button className="btn" onClick={()=>supabase.auth.signOut()}
                     style={{background:theme.dangerDim,color:theme.danger,padding:"11px 0",borderRadius:9,
-                      fontSize:12,width:"100%",border:`1px solid ${theme.danger}44`,
-                      fontFamily:"'Jost',sans-serif",fontWeight:800,letterSpacing:"0.06em"}}>SIGN OUT</button>
+                      fontSize:26,width:"100%",border:`1px solid ${theme.danger}44`,
+                      fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,letterSpacing:"0.02em"}}>SIGN OUT</button>
                 </div>
               </div>
             )}
@@ -1926,11 +2135,12 @@ function NoteFlowApp() {
               return (
                 <button key={item.key} className="btn"
                   onClick={()=>{if(item.key==="notes")setEditingNote(null);setView(item.key);}}
-                  style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2,
-                    padding:"10px 0 5px",color:active?theme.gold:theme.textMuted,background:"none",border:"none",
-                    borderTop:active?`2px solid ${theme.gold}`:"2px solid transparent",transition:"all 0.15s"}}>
-                  <span style={{fontSize:17,lineHeight:1}}>{item.ic}</span>
-                  <span style={{fontSize:9,fontFamily:"'JetBrains Mono',monospace",letterSpacing:"0.06em",fontWeight:active?600:400}}>{item.lbl}</span>
+                  style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3,
+                    padding:"8px 0 6px",color:active?theme.gold:theme.textMuted,background:"none",border:"none",
+                    borderTop:active?`3px solid ${theme.gold}`:"3px solid transparent",
+                    minHeight:72,transition:"all 0.15s"}}>
+                  <span style={{fontSize:44,lineHeight:1}}>{item.ic}</span>
+                  <span style={{fontSize:11,fontFamily:"'Plus Jakarta Sans',sans-serif",letterSpacing:"0.01em",fontWeight:active?700:500}}>{item.lbl}</span>
                 </button>
               );
             })}
