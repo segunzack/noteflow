@@ -400,21 +400,29 @@ function NigeriaNewsBanner({isMobile,theme}) {
         <div style={{flex:1}}/>
         <button className="btn" onClick={()=>setOpen(false)} style={{color:theme.textMuted,fontSize:19,lineHeight:1}}>✕</button>
       </div>
-      <div style={{display:"flex",overflowX:"auto",padding:isMobile?"8px 14px":"8px 22px",
-        scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",gap:0}}>
-        {loading && <div style={{color:theme.textMuted,fontSize:19,fontStyle:"italic",fontFamily:"'Lora',Georgia,serif",padding:"8px 0"}}>Loading Nigeria macro update…</div>}
+      <div style={{display:"flex",overflowX:"auto",
+        padding:isMobile?"5px 12px 6px":"8px 22px",
+        scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",gap:0,
+        maxHeight:isMobile?"calc(20vh - 32px)":undefined}}>
+        {loading && <div style={{color:theme.textMuted,fontSize:isMobile?11:15,fontStyle:"italic",fontFamily:"'Lora',Georgia,serif",padding:"4px 0"}}>Loading…</div>}
         {news&&news.map((item,i)=>(
-          <div key={i} style={{minWidth:isMobile?"82vw":260,maxWidth:isMobile?"82vw":260,marginRight:10,
-            background:theme.surface2,border:`1px solid ${theme.border}`,borderRadius:14,padding:"9px 12px",
-            flexShrink:0,scrollSnapAlign:"start"}}>
-            <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
-              <span style={{background:theme.goldDim,color:theme.gold,borderRadius:16,padding:"0 5px",
-                fontSize:19,fontFamily:"'DM Mono',monospace",fontWeight:500,flexShrink:0,marginTop:2}}>
+          <div key={i} style={{minWidth:isMobile?"70vw":260,maxWidth:isMobile?"70vw":260,marginRight:8,
+            background:theme.surface2,border:`1px solid ${theme.border}`,borderRadius:12,
+            padding:isMobile?"5px 8px":"9px 12px",
+            flexShrink:0,scrollSnapAlign:"start",
+            overflow:"hidden"}}>
+            <div style={{display:"flex",gap:5,alignItems:"flex-start"}}>
+              <span style={{background:theme.goldDim,color:theme.gold,borderRadius:10,padding:"0 4px",
+                fontSize:isMobile?10:15,fontFamily:"'DM Mono',monospace",fontWeight:500,flexShrink:0,marginTop:1}}>
                 {String(i+1).padStart(2,"0")}
               </span>
-              <div>
-                <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:19,color:theme.text,marginBottom:3,lineHeight:1.35}}>{item.headline}</div>
-                <div style={{fontSize:19,color:theme.textSoft,lineHeight:1.5,fontFamily:"'Lora',Georgia,serif"}}>{item.summary}</div>
+              <div style={{minWidth:0}}>
+                <div style={{fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,
+                  fontSize:isMobile?11:15,color:theme.text,
+                  lineHeight:1.3,
+                  overflow:"hidden",display:"-webkit-box",
+                  WebkitLineClamp:isMobile?2:3,WebkitBoxOrient:"vertical"}}>{item.headline}</div>
+                {!isMobile&&<div style={{fontSize:13,color:theme.textSoft,lineHeight:1.5,fontFamily:"'Lora',Georgia,serif",marginTop:2}}>{item.summary}</div>}
               </div>
             </div>
           </div>
@@ -1285,7 +1293,7 @@ function EmptyState({theme,text}) {
 // ════════════════════════════════════════════════════════════════
 //  HOME DASHBOARD
 // ════════════════════════════════════════════════════════════════
-function HomeDashboard({ theme, notes, tasks, allTasks, quote, qFade, onNextQuote, onNav, onNoteClick }) {
+function HomeDashboard({ theme, notes, tasks, allTasks, quote, qFade, onNextQuote, onNav, onNoteClick, isMobile }) {
   const todayTasks = allTasks.filter(t => t.segment==="today"     && !t.done);
   const weekTasks  = allTasks.filter(t => t.segment==="this-week" && !t.done);
   const topNotes   = [...notes].slice(0, 5);
@@ -1295,33 +1303,50 @@ function HomeDashboard({ theme, notes, tasks, allTasks, quote, qFade, onNextQuot
   return (
     <div className="fade-in">
 
-      {/* Hero quote card */}
-      <div style={{ background:theme.dashHero,borderRadius:16,padding:"24px 22px 20px",marginBottom:16,
-        border:`1px solid ${theme.quoteBorder}`,position:"relative",overflow:"hidden" }}>
-        <div style={{ position:"absolute",top:-20,right:4,fontSize:160,color:theme.gold,
-          opacity:0.05,fontFamily:"'Lora',Georgia,serif",lineHeight:1,userSelect:"none",pointerEvents:"none" }}>"</div>
-        <div style={{ opacity:qFade?1:0,transition:"opacity 0.28s" }}>
-          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:12,
+      {/* Hero quote card — compact on mobile (~10vh) */}
+      <div style={{ background:theme.dashHero,borderRadius:16,
+        padding:isMobile?"6px 12px":"24px 22px 20px",
+        marginBottom:isMobile?8:16,
+        border:`1px solid ${theme.quoteBorder}`,position:"relative",overflow:"hidden",
+        maxHeight:isMobile?"10vh":undefined }}>
+        {!isMobile&&<div style={{ position:"absolute",top:-20,right:4,fontSize:160,color:theme.gold,
+          opacity:0.05,fontFamily:"'Lora',Georgia,serif",lineHeight:1,userSelect:"none",pointerEvents:"none" }}>"</div>}
+        <div style={{ opacity:qFade?1:0,transition:"opacity 0.28s",
+          display:"flex",alignItems:"center",gap:8,
+          height:isMobile?"100%":undefined }}>
+          {!isMobile&&<div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:12,
             color:theme.gold,textTransform:"uppercase",letterSpacing:"0.02em",marginBottom:8 }}>
             ✦ QUOTE OF THE DAY
-          </div>
-          <p style={{ fontFamily:"'Lora',Georgia,serif",fontStyle:"italic",fontWeight:700,fontSize:28,
-            color:theme.quoteText,lineHeight:1.45,marginBottom:10,paddingRight:32 }}>
+          </div>}
+          <p style={{ fontFamily:"'Lora',Georgia,serif",fontStyle:"italic",
+            fontWeight:isMobile?500:700,
+            fontSize:isMobile?11:28,
+            color:theme.quoteText,lineHeight:isMobile?1.3:1.45,
+            margin:0,flex:1,
+            overflow:"hidden",display:"-webkit-box",
+            WebkitLineClamp:isMobile?2:undefined,WebkitBoxOrient:"vertical",
+            paddingRight:isMobile?0:32 }}>
             "{quote?.text||quote?.t}"
           </p>
-          <div style={{ display:"flex",gap:10,alignItems:"center",justifyContent:"space-between" }}>
-            <div>
-              <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:15,color:theme.gold }}>
-                — {quote?.author||quote?.a}
-              </span>
-              <span style={{ fontFamily:"'DM Mono',monospace",fontSize:12,color:theme.textMuted,marginLeft:8 }}>
-                {quote?.role||quote?.r}
-              </span>
-            </div>
+          {isMobile ? (
             <button onClick={onNextQuote}
-              style={{ color:theme.textMuted,fontSize:17,padding:"4px 10px",borderRadius:10,
-                background:theme.goldDim,border:"none",cursor:"pointer",lineHeight:1 }}>↻</button>
-          </div>
+              style={{ color:theme.textMuted,fontSize:13,padding:"3px 7px",borderRadius:8,
+                background:theme.goldDim,border:"none",cursor:"pointer",lineHeight:1,flexShrink:0 }}>↻</button>
+          ) : (
+            <div style={{ display:"flex",gap:10,alignItems:"center",justifyContent:"space-between",marginTop:10 }}>
+              <div>
+                <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif",fontWeight:700,fontSize:15,color:theme.gold }}>
+                  — {quote?.author||quote?.a}
+                </span>
+                <span style={{ fontFamily:"'DM Mono',monospace",fontSize:12,color:theme.textMuted,marginLeft:8 }}>
+                  {quote?.role||quote?.r}
+                </span>
+              </div>
+              <button onClick={onNextQuote}
+                style={{ color:theme.textMuted,fontSize:17,padding:"4px 10px",borderRadius:10,
+                  background:theme.goldDim,border:"none",cursor:"pointer",lineHeight:1 }}>↻</button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -1814,6 +1839,7 @@ function NoteFlowApp() {
                 onNextQuote={nextQuote}
                 onNav={key=>setView(key)}
                 onNoteClick={n=>{setEditingNote(n);setView("note-edit");}}
+                isMobile={isMobile}
               />
             )}
 
